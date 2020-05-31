@@ -1,0 +1,105 @@
+{
+"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+	"blackcastle": {
+		"file": "blackcastlemf.fnt"
+	}
+},
+"com.badlogic.gdx.graphics.Color": {
+	"black": {
+		"r": 0,
+		"g": 0,
+		"b": 0,
+		"a": 1
+	},
+	"dark_red": {
+		"r": 0.5294118,
+		"g": 0,
+		"b": 0,
+		"a": 1
+	},
+	"gold": {
+		"r": 1,
+		"g": 0.8627451,
+		"b": 0.31764707,
+		"a": 1
+	},
+	"white": {
+		"r": 1,
+		"g": 1,
+		"b": 1,
+		"a": 1
+	}
+},
+"com.kotcrab.vis.ui.Sizes": {
+	"default": {
+		"scaleFactor": 1,
+		"spacingBottom": 8,
+		"spacingRight": 6,
+		"buttonBarSpacing": 10,
+		"menuItemIconSize": 22,
+		"borderSize": 1,
+		"spinnerButtonHeight": 12,
+		"spinnerFieldSize": 50,
+		"fileChooserViewModeBigIconsSize": 200,
+		"fileChooserViewModeMediumIconsSize": 128,
+		"fileChooserViewModeSmallIconsSize": 64,
+		"fileChooserViewModeListWidthSize": 150
+	}
+},
+"com.kotcrab.vis.ui.widget.Separator$SeparatorStyle": {
+	"default": {
+		"thickness": 4
+	},
+	"menu": {
+		"thickness": 1
+	}
+},
+"com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane$TabbedPaneStyle": {
+	"default": {
+		"vertical": false,
+		"draggable": false
+	}
+},
+"com.kotcrab.vis.ui.widget.BusyBar$BusyBarStyle": {
+	"default": {
+		"height": 5,
+		"segmentWidth": 150,
+		"segmentOverflow": 10
+	}
+},
+"com.kotcrab.vis.ui.widget.ListViewStyle": {
+	"default": {
+		"scrollPaneStyle": {"vScrollKnob": "arrow"}
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+	"default": {
+		"font": "blackcastle",
+		"fontColor": "white"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+	"default": {
+		"vScrollKnob": "arrow"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+	"default": {
+		"font": "blackcastle",
+		"fontColor": "white",
+		"up": "skull_button",
+		"down": "skull_button_pressed"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle": {
+	"default": {
+		"label": "default"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+	"default": {
+		"titleFont": "blackcastle",
+		"titleFontColor": "white"
+	}
+}
+}

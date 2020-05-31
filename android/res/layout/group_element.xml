@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rv_group_selector"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/rv_padding"
+    android:paddingBottom="@dimen/rv_padding">
+
+    <TextView
+        android:id="@+id/group_players"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="false"
+        android:text="@string/players"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/medium_text" />
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/group_name"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/medium_text" />
+
+</RelativeLayout>

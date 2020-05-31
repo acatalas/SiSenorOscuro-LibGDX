@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:paddingTop="@dimen/rv_padding"
+    android:paddingBottom="@dimen/rv_padding">
+
+    <TextView
+        android:id="@+id/tv_player_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:fontFamily="sans-serif"
+        android:text="@string/name"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/medium_text" />
+
+</LinearLayout>

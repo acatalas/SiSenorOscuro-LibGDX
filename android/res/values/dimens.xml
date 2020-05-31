@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="medium_text">16sp</dimen>
+    <dimen name="small_text">14sp</dimen>
+    <dimen name="title_text">38sp</dimen>
+    <dimen name="scroll_button_text">20sp</dimen>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="v_padding">8dp</dimen>
+    <dimen name="h_padding">16dp</dimen>
+    <dimen name="rv_padding">4dp</dimen>
+</resources>

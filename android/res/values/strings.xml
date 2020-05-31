@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Si Señor Oscuro</string>
+    <string name="create_group">Create Group</string>
+    <string name="create_your_group"><u>Create your Group</u></string>
+    <string name="join_group">Join Group</string>
+    <string name="players">Players</string>
+    <string name="players_title"><u>Players</u></string>
+    <string name="join">Join</string>
+    <string name="groups">Groups</string>
+    <string name="groups_title"><u>Groups</u></string>
+    <string name="settings">Settings</string>
+    <string name="name">Name</string>
+    <string name="name_summary">Sets the name viewed by other players</string>
+    <string name="group_name">Group name</string>
+    <string name="max_num_players">Max. number of players</string>
+    <string name="five">5</string>
+    <string name="group_preference_category">Group preferences</string>
+    <string name="max_players_summary">Maximum number of players in a group</string>
+    <string name="player_name">Player name</string>
+    <string name="incorrect_num_players_error">Number of players must be between %1$d and %2$d</string>
+    <string name="incorrect_length_error">%1$s must be between %2$d and %3$d characters long</string>
+    <string name="abandon_group">Abandon group</string>
+    <string name="name_preferences_key">NAME</string>
+    <string name="max_players_preferences_key">MAX_PLAYERS</string>
+    <string name="num_players_max_players">%1$d/%2$d</string>
+    <string name="mirada_asesina">Mirada asesina</string>
+    <string name="no_name_dialog">What name do you want to use in this group?</string>
+    <string name="duplicate_name_dialog">Please choose a name that is not already in use</string>
+    <string name="play">Play</string>
+    <string name="pass_turn">I have failed you, sir...</string>
+</resources>

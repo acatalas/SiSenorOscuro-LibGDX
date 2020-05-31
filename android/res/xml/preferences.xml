@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/group_preference_category">
+
+        <EditTextPreference
+            android:key="@string/name_preferences_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/name_summary"
+            android:title="@string/name" />
+        <EditTextPreference
+            android:defaultValue="@integer/min_players"
+            android:key="@string/max_players_preferences_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/max_players_summary"
+            android:title="@string/max_num_players" />
+    </PreferenceCategory>
+</PreferenceScreen>

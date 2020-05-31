@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn_create_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_bgn"
+        android:fontFamily="@font/blackcastlemf"
+        android:includeFontPadding="false"
+        android:text="@string/create_group"
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_settings"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_v"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <Button
+        android:id="@+id/btn_join_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_bgn"
+        android:fontFamily="@font/blackcastlemf"
+        android:text="@string/join_group"
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_v"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <Button
+        android:id="@+id/btn_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bgn"
+        android:fontFamily="@font/blackcastlemf"
+        android:text="@string/settings"
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_v"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <Button
+        android:id="@+id/btnShop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SHOP"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="@+id/btn_join_group"
+        app:layout_constraintStart_toStartOf="@+id/btn_join_group"
+        app:layout_constraintTop_toBottomOf="@+id/btn_join_group" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
