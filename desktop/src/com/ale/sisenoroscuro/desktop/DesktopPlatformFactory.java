@@ -16,7 +16,12 @@ import java.util.List;
 public class DesktopPlatformFactory implements PlatformFactory {
 
     @Override
-    public void getCard(String groupId, String playerId, CardType type, int num) {
+    public void getCards(String groupId, String playerId, int numActionCards, int numExcuseCards) {
+
+    }
+
+    @Override
+    public void getCard(String groupId, String playerId, CardType type) {
 
     }
 
@@ -92,6 +97,11 @@ public class DesktopPlatformFactory implements PlatformFactory {
 
     @Override
     public void sendPleadDeniedAction(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendMiradaAction(String groupId, String playerId) {
 
     }
 }

@@ -10,8 +10,6 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.ale.sisenoroscuro.GameTable;
 
 public class AndroidLauncher extends AndroidApplication {
-	private Group group;
-	private Player player;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -32,9 +30,9 @@ public class AndroidLauncher extends AndroidApplication {
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
 		//String id, String name, String masterId, int numPlayers, int maxPlayers, GroupState state
-		group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
+		Group group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
 		group.setMasterId("i5ogRmhGHU0W4RVqfFQf");
-		player = new Player("9HvZNqOCjhnH86oG7dcv", "Acknowledgement");
+		Player player = new Player("i5ogRmhGHU0W4RVqfFQf", "Acknowledgement");
 		initialize(new GameTable(new AndroidPlatformFactory(getApplicationContext()), group, player), config);
 	}
 }

@@ -1,5 +1,6 @@
 package com.ale.sisenoroscuro.screens;
 
+import com.ale.sisenoroscuro.ActionGenerator;
 import com.ale.sisenoroscuro.ActionListener;
 import com.ale.sisenoroscuro.Assets;
 import com.ale.sisenoroscuro.FontManager;
@@ -53,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SlaveGameScreen extends GameScreen implements Screen, ActionListener {
-
+    private static float ACTIVE_PLAYER_LABEL_FONT_SIZE = 28;
     private static float WIDTH_UNIT = SCREEN_WIDTH / 5; //128
     private static float HEIGHT_UNIT = SCREEN_HEIGHT / 5;
     private static float DIALOG_LIST_HEIGHT = HEIGHT_UNIT * 3;
@@ -65,8 +66,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     private static float STACK_CARD_WIDTH = SCREEN_WIDTH / 2 / 3;
     private float STACK_CARD_GROUP_WIDTH;
 
-    private TextureAtlas textureAtlas;
-
     private VerticalGroup cardStackGroup;
     private CardBoardActor actionCardsBoard, excuseCardsBoard;
     private Table cardTable;
@@ -76,15 +75,13 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     private final ModalDialog modalDialog;
     private TextButton playButton;
 
-    private CurrentCardStackActor currentCardStackActor;
     private CardActor standbyCardActor;
     private MiradaCardActor[] miradaImages = new MiradaCardActor[3];
 
     private DragAndDrop dnd;
 
-    private Image currentCardImage, miradaCardImage;
+    private Image miradaCardImage;
     private TiledDrawable transparentOverlay;
-    private VisLabel.LabelStyle blackCastleLabelStyle;
 
     public SlaveGameScreen(final PlatformFactory platformFactory, final Group group, Player me){
         super(platformFactory, group, me);
@@ -122,8 +119,8 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
         generateUIComponents();
 
-        blackCastleLabelStyle = new Label.LabelStyle(activePlayerLabel.getStyle());
-        blackCastleLabelStyle.font = fontManager.getBlackCastleFont(50, true);
+        messageLabelStyle = new Label.LabelStyle(activePlayerLabel.getStyle());
+        messageLabelStyle.font = fontManager.getBlackCastleFont(FontManager.MESSAGE_LABEL_FONT_SIZE, true);
 
         TextureAtlas.AtlasRegion miradaCardRegion = textureAtlas.findRegion(Assets.mirada1);
         float mHeight = MIRADA_CARD_WIDTH * miradaCardRegion.getRegionHeight() / miradaCardRegion.getRegionWidth();
@@ -150,7 +147,9 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         stage.addActor(mainTable);
         mainTable.layout();
 
-        currentCardStackActor.setAbsolutePosition(currentCardStackActor.localToStageCoordinates(new Vector2(currentCardStackActor.getWidth() / 2, currentCardStackActor.getHeight() / 2)));
+        currentCardStackActor.setAbsolutePosition(
+                currentCardStackActor.localToStageCoordinates(
+                        new Vector2(currentCardStackActor.getWidth() / 2, currentCardStackActor.getHeight() / 2)));
         //activeCardImagePosition = activeCardImage.localToStageCoordinates(new Vector2(activeCardImage.getWidth() / 2, activeCardImage.getHeight() / 2));
 
         currentCardImage = new Image();
@@ -169,6 +168,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     protected void generateUIComponents(){
         super.generateUIComponents();
+        setActivePlayerLabelStyle(ACTIVE_PLAYER_LABEL_FONT_SIZE);
         generatePlayerDetailListView();
         generateCardBoardTable();
         STACK_CARD_GROUP_WIDTH = generateCardStackGroup();
@@ -179,6 +179,16 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         modalDialog.add(playerListDetailView.getMainTable()).height(DIALOG_LIST_HEIGHT);
         modalDialog.row();
         modalDialog.add(playButton).size(WIDTH_UNIT, DIALOG_BUTTON_HEIGHT);
+    }
+
+    @Override
+    protected void generatePlayerListView(){
+        playerListAdapter = new PlayerVisAdapter(fontManager, players, Align.right);
+        playerListView = new ListView<>(playerListAdapter);
+        playerListView.getScrollPane().setFlickScroll(true);
+        playerListView.getScrollPane().setScrollbarsOnTop(true);
+        playerListView.getScrollPane().setVariableSizeKnobs(false);
+        playerListView.getScrollPane().setScrollingDisabled(true, false);
     }
 
     protected void generatePlayerDetailListView(){
@@ -200,7 +210,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     private VerticalGroup getCurrentCardStackGroup(){
         VerticalGroup vGroup = new VerticalGroup();
         vGroup.addActor(miradaImages[1]);
-        currentCardStackActor = new CurrentCardStackActor(HEIGHT_UNIT / 2);
         vGroup.addActor(new Container<>(currentCardStackActor).padTop(HEIGHT_UNIT / 2));
         return vGroup;
     }
@@ -247,15 +256,9 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
      */
     private float generateCardStackGroup(){
 
-        //Loads the active player label
-        activePlayerLabel = new VisLabel("");
-        VisLabel.LabelStyle activePlayerLabelStyle = activePlayerLabel.getStyle();
-        activePlayerLabelStyle.font = fontManager.getBlackCastleFont(FontManager.ACTIVE_PLAYER_LABEL_FONT_SIZE, false);
-        activePlayerLabel.setStyle(activePlayerLabelStyle);
-
         //Get width of label
         GlyphLayout layout = new GlyphLayout(); //dont do this every frame! Store it as member
-        layout.setText(activePlayerLabelStyle.font, "Acknowledgement");
+        layout.setText(activePlayerLabel.getStyle().font, "Acknowledgement");
 
         //Loads the reverse card
         Drawable visReverseDrawable = changeDrawableSize(new TextureRegionDrawable(textureAtlas.findRegion(Assets.reverso)), STACK_CARD_WIDTH);
@@ -380,7 +383,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         if (action.getAction() == ActionType.GET_CARD){
             doGetCardAction(action);
         } else if(action.getAction() == ActionType.PLAY_EXCUSE){
-            doExcuseAction(action);
+            doPlayExcuseAction(action);
         } else if(action.getAction() == ActionType.START){
             doStartAction(action);
         } else if(action.getAction() == ActionType.MIRADA){
@@ -419,10 +422,8 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         if(action.getPlayer().equals(player.getId())){
             ActionCard actionCard = (ActionCard)action.getCard();
             if(actionCard.getSiSenorOscuro()){
-                //TODO: CONTINUE PLAYING GAME
                 platformFactory.sendGameNotOverAction(group.getId(), player.getId());
             } else {
-                //TODO: GAME OVER
                 platformFactory.sendGameOverAction(group.getId(), player.getId());
             }
         }
@@ -450,7 +451,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void doPlayInterrumpirAction(Action action) {
-        System.out.println("doPlayInterrumpir: " + action.toString());
         playerManager.playInterrumpirCard(action.getPlayer(),
                 action.getCard().getCardType() == CardType.ACTION ?
                         (ActionCard)action.getCard() :
@@ -463,6 +463,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void doPleadNotAcceptedAction(Action action) {
+        showMessage("PLEAD DENIED!");
         gameOver(playerManager.getPlayer(action.getPlayer()));
     }
 
@@ -473,7 +474,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void doPleadAction(Action action) {
-
+        //DO SOMETHING???
     }
 
     private void doMiradaAction(Action action) {
@@ -541,7 +542,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         playerListAdapter.itemsDataChanged();
     }
 
-    private void doExcuseAction(Action action){
+    private void doPlayExcuseAction(Action action){
         playerManager.playExcuseCard(action.getPlayer());
         playerListAdapter.itemsDataChanged();
         showReceiveExcuseCardAnimation(action.getCard());
@@ -571,7 +572,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void showMessage(String message){
-        final VisLabel label = new VisLabel(message, blackCastleLabelStyle);
+        final VisLabel label = new VisLabel(message, messageLabelStyle);
         label.setAlignment(Align.center);
         Container<VisLabel> labelContainer = new Container<>(label);
         labelContainer.setTransform(true);
@@ -610,7 +611,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         miradaCardImage.setOrigin(Align.center);
         miradaCardImage.setPosition(SCREEN_WIDTH/2 - miradaCardImage.getWidth()/2, SCREEN_HEIGHT/2 - miradaCardImage.getHeight()/2);
         miradaCardImage.addAction(Actions.sequence(
-                getReceiveCardAction(),
+                ActionGenerator.getShowCardAction(),
                 Actions.delay(2),
                 Actions.run(new Runnable() {
             @Override
@@ -619,49 +620,5 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
             }
         })));
         stage.addActor(miradaCardImage);
-    }
-
-    public void showReceiveExcuseCardAnimation(Card card){
-        if(currentCardImage != null){
-            currentCardImage.remove();
-        }
-
-        currentCardImage = new Image(textureAtlas.findRegion(card.getFullName()));
-        currentCardImage.setHeight(currentCardStackActor.getImageHeight());
-        currentCardImage.setScaling(Scaling.fit);
-        currentCardImage.setOrigin(Align.center);
-        currentCardImage.setPosition(SCREEN_WIDTH/2 - currentCardImage.getWidth()/2, SCREEN_HEIGHT/2 - currentCardImage.getHeight()/2);
-
-        currentCardImage.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                event.getTarget().addAction(getHideCardAction()); //Hides image and sends to CardStack
-            }
-        });
-
-        currentCardStackActor.setTouchable(Touchable.disabled);
-        currentCardStackActor.addListener(new ImageListener(currentCardImage));
-
-        currentCardImage.addAction(getReceiveCardAction());
-        stage.addActor(currentCardImage);
-
-    }
-
-    private com.badlogic.gdx.scenes.scene2d.Action getReceiveCardAction(){
-        return Actions.scaleBy(8.5f , 8.5f, 0.3f);
-    }
-
-    private com.badlogic.gdx.scenes.scene2d.Action getHideCardAction(){
-        Vector2 cardStackPosition = currentCardStackActor.getAbsolutePosition();
-        return Actions.sequence(
-                    Actions.parallel(
-                            Actions.moveBy(cardStackPosition.x, cardStackPosition.y, 0.3f),
-                            Actions.scaleBy(-8.5f, -8.f, 0.3f)),
-                Actions.hide(),
-                Actions.run(new Runnable() {
-                    public void run() {
-                        currentCardStackActor.setTouchable(Touchable.enabled);
-                    }
-                }));
     }
 }

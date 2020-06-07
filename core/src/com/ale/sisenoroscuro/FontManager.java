@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 
 public class FontManager {
-    public static final float ACTIVE_PLAYER_LABEL_FONT_SIZE = 28;
+    public static final float MESSAGE_LABEL_FONT_SIZE = 50;
     private static final String BLACKCASTLE_FONT = "blackcastlemf";
     public static final String GREAT_VIBES_FONT = "greatvibes";
     public static final String GREAT_VIBES_FONT_FILE_NAME = GREAT_VIBES_FONT + ".ttf";

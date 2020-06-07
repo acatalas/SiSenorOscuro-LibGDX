@@ -26,4 +26,6 @@ public interface PlatformFactory {
     void sendGameNotOverAction(String groupId, String playerId);
     void sendPleadAcceptedAction(String groupId, String playerId);
     void sendPleadDeniedAction(String groupId, String playerId);
+
+    void sendMiradaAction(String groupId, String playerId);
 }

@@ -1,9 +1,13 @@
 package com.ale.sisenoroscuro.screens;
 
+import com.ale.sisenoroscuro.ActionGenerator;
 import com.ale.sisenoroscuro.FontManager;
+import com.ale.sisenoroscuro.ImageListener;
 import com.ale.sisenoroscuro.PlatformFactory;
 import com.ale.sisenoroscuro.PlayerManager;
 import com.ale.sisenoroscuro.PlayerVisAdapter;
+import com.ale.sisenoroscuro.actors.CurrentCardStackActor;
+import com.ale.sisenoroscuro.classes.Card;
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.Player;
 import com.badlogic.gdx.Gdx;
@@ -12,11 +16,19 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.VisUI;
@@ -27,11 +39,14 @@ import com.kotcrab.vis.ui.widget.VisTable;
 
 import java.util.ArrayList;
 
-public class GameScreen implements Screen {
+public abstract class GameScreen implements Screen {
     protected static float SCREEN_WIDTH = Gdx.graphics.getWidth();
     protected static float SCREEN_HEIGHT = Gdx.graphics.getHeight();
+    protected static float CARD_STACK_HEIGHT = SCREEN_HEIGHT / 5 / 2;
 
     protected PlatformFactory platformFactory;
+
+    protected TextureAtlas textureAtlas;
 
     protected Stage stage;
     protected Viewport viewport;
@@ -48,6 +63,10 @@ public class GameScreen implements Screen {
     protected ListView<Player> playerListView;
     protected ArrayList<Player> players;
     protected VisLabel activePlayerLabel;
+    protected VisLabel.LabelStyle messageLabelStyle;
+
+    protected CurrentCardStackActor currentCardStackActor;
+    protected Image currentCardImage;
 
     protected PlayerManager playerManager;
     protected Group group;
@@ -61,6 +80,9 @@ public class GameScreen implements Screen {
         if(!VisUI.isLoaded()){
             VisUI.load(Gdx.files.internal("uiskin.json"));
         }
+
+        this.textureAtlas = new TextureAtlas("cards.atlas");
+        this.currentCardImage = new Image();
 
         this.platformFactory = platformFactory;
         this.assetManager = new AssetManager();
@@ -124,6 +146,8 @@ public class GameScreen implements Screen {
 
     protected void generateUIComponents(){
         generatePlayerListView();
+        generateActivePlayerLabel();
+        generateCardStackActor();
     }
 
     protected void generatePlayerListView(){
@@ -135,4 +159,47 @@ public class GameScreen implements Screen {
         playerListView.getScrollPane().setScrollingDisabled(true, false);
     }
 
+    protected void generateActivePlayerLabel(){
+        activePlayerLabel = new VisLabel("Acknowledgement");
+        activePlayerLabel.setAlignment(Align.center);
+
+        messageLabelStyle = new Label.LabelStyle(activePlayerLabel.getStyle());
+        messageLabelStyle.font = fontManager.getBlackCastleFont(FontManager.MESSAGE_LABEL_FONT_SIZE, true);
+    }
+
+    protected void generateCardStackActor(){
+        currentCardStackActor = new CurrentCardStackActor(CARD_STACK_HEIGHT);
+    }
+
+    protected void setActivePlayerLabelStyle(float fontSize) {
+        //Sets the style of the activePlayerLabel
+        Label.LabelStyle labelStyle = activePlayerLabel.getStyle();
+        labelStyle.font = fontManager.getBlackCastleFont(fontSize, false);
+        activePlayerLabel.setStyle(labelStyle);
+    }
+
+    public void showReceiveExcuseCardAnimation(Card card){
+        if(currentCardImage != null){
+            currentCardImage.remove();
+        }
+
+        currentCardImage = new Image(textureAtlas.findRegion(card.getFullName()));
+        currentCardImage.setHeight(currentCardStackActor.getImageHeight());
+        currentCardImage.setScaling(Scaling.fit);
+        currentCardImage.setOrigin(Align.center);
+        currentCardImage.setPosition(SCREEN_WIDTH/2 - currentCardImage.getWidth()/2, SCREEN_HEIGHT/2 - currentCardImage.getHeight()/2);
+
+        currentCardImage.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(ActionGenerator.getMoveCardToStackAction(currentCardStackActor)); //Hides image and sends to CardStack
+            }
+        });
+
+        currentCardStackActor.setTouchable(Touchable.disabled);
+        currentCardStackActor.addListener(new ImageListener(currentCardImage));
+
+        currentCardImage.addAction(ActionGenerator.getShowCardAction());
+        stage.addActor(currentCardImage);
+    }
 }

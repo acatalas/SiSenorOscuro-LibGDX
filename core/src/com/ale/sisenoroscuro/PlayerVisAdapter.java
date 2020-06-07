@@ -38,6 +38,8 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
     private final float fontWidth;
     private final float labelWidth;
 
+    private int alignment = Align.left;
+
     public PlayerVisAdapter(FontManager fontManager, ArrayList<Player> array) {
         super(array);
         font = fontManager.getGreatVibesFont(fontSize);
@@ -55,11 +57,14 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
         totalSpacing = spacing * numImages - spacing;
         groupWidth = imageWidth * numImages + totalSpacing;
 
-        System.out.println("SPACING: " + spacing + " IMAGEWIDTH: " + imageWidth);
-
         selectedColor = VisUI.getSkin().getColor("gold");
         availableColor = Color.WHITE;
         unavailableColor = Color.GRAY;
+    }
+
+    public PlayerVisAdapter(FontManager fontManager, ArrayList<Player> array, int alignment) {
+        this(fontManager, array);
+        this.alignment = alignment;
     }
 
     @Override
@@ -86,7 +91,9 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
         Label livesLabel = new VisLabel(player.getNumOutCards() + "", labelStyle);
         livesLabel.setAlignment(Align.center);
         table.add(livesLabel).width(fontWidth * 1.5f).padRight(5).padLeft(5);
-        table.right();
+        if(alignment == Align.right){
+            table.right();
+        }
         return table;
     }
 

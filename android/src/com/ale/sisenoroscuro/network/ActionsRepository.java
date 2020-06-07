@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class ActionsRepository {
 
     private final FirebaseHelper firebaseHelper;
-    private String groupId;
+    private final String groupId;
 
     public ActionsRepository(FirebaseHelper firebaseHelper, String groupId){
         this.firebaseHelper = firebaseHelper;

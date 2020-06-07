@@ -87,6 +87,11 @@ public class AndroidPlatformFactory implements PlatformFactory {
     }
 
     @Override
+    public void sendMiradaAction(String groupId, String playerId) {
+
+    }
+
+    @Override
     public void getCards(String groupId, String playerId, int numActionCards, int numExcuseCards) {
         getActionsRepository(groupId).getCards(playerId, numExcuseCards, numActionCards);
     }

@@ -9,17 +9,13 @@ import com.kotcrab.vis.ui.VisUI;
 
 
 public class CurrentCardStackActor extends Image {
-    private final float imageWidth;
-    private final float imageHeight;
-    private final Drawable drawable;
     private Vector2 position;
 
     public CurrentCardStackActor(float imageHeight){
-        this.imageHeight = imageHeight;
-        drawable = VisUI.getSkin().getDrawable("card_icon");
-        this.imageWidth = this.imageHeight * drawable.getMinWidth() / drawable.getMinHeight();
-        drawable.setMinWidth(this.imageWidth);
-        drawable.setMinHeight(this.imageHeight);
+        Drawable drawable = VisUI.getSkin().getDrawable("card_icon");
+        float imageWidth = imageHeight * drawable.getMinWidth() / drawable.getMinHeight();
+        drawable.setMinWidth(imageWidth);
+        drawable.setMinHeight(imageHeight);
         setDrawable(drawable);
         setAlign(Align.center);
     }
