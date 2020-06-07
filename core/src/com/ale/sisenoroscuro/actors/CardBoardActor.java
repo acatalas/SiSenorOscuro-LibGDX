@@ -35,6 +35,24 @@ public class CardBoardActor extends HorizontalGroup {
         align(Align.center);
     }
 
+    public void addCardActor(CardActor cardActor){
+        cardActors.add(cardActor);
+        addActor(cardActor);
+    }
+
+    public void removeAllCards(){
+        for(int i = 0; i < cardActors.size(); i++){
+            removeActor(cardActors.get(i));
+        }
+        cardActors.clear();
+    }
+
+    public void removeCardActor(CardActor cardActor){
+        cardActors.remove(cardActor);
+        removeActor(cardActor);
+        System.out.println(cardActors.toString());
+    }
+
     public void addCard(Card card){
         CardActor cardActor = new CardActor(getCardTexture(card), cardWidth, cardHeight, card);
         cardActors.add(cardActor);

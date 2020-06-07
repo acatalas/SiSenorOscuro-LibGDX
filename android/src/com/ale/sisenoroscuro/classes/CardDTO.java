@@ -1,5 +1,7 @@
 package com.ale.sisenoroscuro.classes;
 
+import com.google.gson.Gson;
+
 public class CardDTO {
     private String type;
     private String modifier;
@@ -69,5 +71,21 @@ public class CardDTO {
         } else {
             return new ExcuseCard(Integer.parseInt(getModifier()));
         }
+    }
+
+    private static CardDTO getCardDTO(Card card){
+        return new CardDTO(card.getType(),
+                card.getModifier(),
+                card.getCardType() == CardType.ACTION ? ((ActionCard)card).getSiSenorOscuro() : false);
+    }
+
+    public static String getCardJson(Card card){
+        Gson gson = new Gson();
+        return gson.toJson(getCardDTO(card));
+    }
+
+    public static String getCardsJson(Card card1, Card card2){
+        Gson gson = new Gson();
+        return gson.toJson(new CardDTO[]{getCardDTO(card1), getCardDTO(card2)});
     }
 }

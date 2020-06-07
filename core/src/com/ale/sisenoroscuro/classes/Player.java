@@ -4,17 +4,25 @@ package com.ale.sisenoroscuro.classes;
 public class Player {
     private String id;
     private String name;
+    private byte numTurn;
     private boolean isPlaying;
     private boolean isAvailable;
+    private boolean isSelected;
+    private boolean isPleading;
     private byte numExcuseCards;
-    private byte numActionCards;
+    private byte numPasarMarronCards;
+    private byte numInterrumpirCards;
+    private byte numAmbasCards;
     private byte numOutCards;
 
     public Player(){
         this.isPlaying = false;
         this.isAvailable = true;
-        this.numActionCards = 0;
+        this.numPasarMarronCards = 0;
+        this.numAmbasCards = 0;
+        this.numInterrumpirCards = 0;
         this.numExcuseCards = 0;
+        this.numTurn = 0;
     }
 
     public Player(String name){
@@ -62,6 +70,14 @@ public class Player {
         this.isAvailable = isAvailable;
     }
 
+    public boolean isPleading(){
+        return isPleading;
+    }
+
+    public void setIsPleading(boolean isPleading){
+        this.isPleading = isPleading;
+    }
+
     public byte getNumExcuseCards() {
         return numExcuseCards;
     }
@@ -71,11 +87,19 @@ public class Player {
     }
 
     public byte getNumActionCards() {
-        return numActionCards;
+        return (byte)(numAmbasCards + numInterrumpirCards + numPasarMarronCards);
     }
 
-    public void setNumActionCards(byte numActionCards) {
-        this.numActionCards = numActionCards;
+    public byte getNumPasarMarronCards(){
+        return numPasarMarronCards;
+    }
+
+    public byte getNumInterrumpirCards(){
+        return numInterrumpirCards;
+    }
+
+    public byte getNumAmbasCards(){
+        return numAmbasCards;
     }
 
     public byte getNumOutCards() {
@@ -87,27 +111,78 @@ public class Player {
     }
 
     public byte getTotalCards(){
-        return (byte)(numActionCards + numExcuseCards);
+        return (byte)(getNumActionCards() + getNumExcuseCards());
     }
 
     public void addExcuseCard(){
         numExcuseCards++;
     }
 
+    public void addPasarMarronCard(){
+        numPasarMarronCards++;
+    }
+
+    public void addInterrumpirCard(){
+        numInterrumpirCards++;
+    }
+
+    public void addAmbasCard(){
+        numAmbasCards++;
+    }
+
     public void removeExcuseCard(){
         numExcuseCards--;
     }
 
-    public void addActionCard(){
-        numActionCards++;
+    public void removeInterrumpirCard(){
+        numInterrumpirCards--;
     }
 
-    public void removeActionCard(){
-        numActionCards--;
+    public void removePasarMarronCard(){
+        numPasarMarronCards--;
+    }
+
+    public void removeAmbasCard(){
+        numAmbasCards--;
+    }
+
+    public void removeAllActionCards(){
+        numAmbasCards = 0;
+        numInterrumpirCards = 0;
+        numPasarMarronCards = 0;
+    }
+
+    public void removeAllExcuseCards(){
+        numExcuseCards = 0;
+    }
+
+    public void removeAllCards(){
+        removeAllActionCards();
+        removeAllExcuseCards();
     }
 
     public void addOutCard(){
         numOutCards++;
+    }
+
+    public void incrementTurnNumber(){
+        numTurn++;
+    }
+
+    public byte getNumTurn(){
+        return numTurn;
+    }
+
+    public void resetTurnNumber(){
+        numTurn = 0;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     @Override
@@ -116,5 +191,20 @@ public class Player {
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
         return id.equals(player.id);
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", numTurn=" + numTurn +
+                ", isPlaying=" + isPlaying +
+                ", isAvailable=" + isAvailable +
+                ", isSelected=" + isSelected +
+                ", numExcuseCards=" + numExcuseCards +
+                ", numActionCards=" + getNumActionCards() +
+                ", numOutCards=" + numOutCards +
+                '}';
     }
 }

@@ -13,7 +13,7 @@ public class DesktopLauncher {
 		config.width = 640;
 		config.height = 360;
 
-		Group group = new Group("3NorzbzSWpCDGublbBLD", "PLIS", 4, 4, GroupState.COMPLETE);
+		Group group = new Group("3NorzbzSWpCDGublbBLD", "PLIS", "moPfqwjIfLDpBzcAszah", 4, 4, GroupState.COMPLETE);
 		Player me = new Player("NMitIXWWEiXkHh2ZAzTO", "Gyro");
 
 		new LwjglApplication(new GameTable(new DesktopPlatformFactory(), group, me), config);

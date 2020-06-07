@@ -10,15 +10,31 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.ale.sisenoroscuro.GameTable;
 
 public class AndroidLauncher extends AndroidApplication {
+	private Group group;
+	private Player player;
+
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		/*Bundle extras = getIntent().getExtras();
+
+		group = new Group(extras.getString("groupId"),
+				extras.getString("playerName"),
+				extras.getString("masterId"),
+				extras.getInt("numPlayers"),
+				extras.getInt("numPlayers"),
+				GroupState.COMPLETE);
+
+		player = new Player(extras.getString("playerId"),
+				extras.getString("playerName"));*/
+
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
 		//String id, String name, String masterId, int numPlayers, int maxPlayers, GroupState state
-		Group group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
+		group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
 		group.setMasterId("i5ogRmhGHU0W4RVqfFQf");
-		Player me = new Player("0GZPirk9kokusfVCgLFV", "Alex3");
-		initialize(new GameTable(new AndroidPlatformFactory(getApplicationContext()), group, me), config);
+		player = new Player("9HvZNqOCjhnH86oG7dcv", "Acknowledgement");
+		initialize(new GameTable(new AndroidPlatformFactory(getApplicationContext()), group, player), config);
 	}
 }

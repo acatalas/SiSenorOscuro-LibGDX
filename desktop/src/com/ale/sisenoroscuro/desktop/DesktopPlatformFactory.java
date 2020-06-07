@@ -6,6 +6,7 @@ import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.ActionCard;
 import com.ale.sisenoroscuro.classes.ActionType;
 import com.ale.sisenoroscuro.classes.CardSubType;
+import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.ExcuseCard;
 import com.ale.sisenoroscuro.classes.Player;
 
@@ -13,6 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DesktopPlatformFactory implements PlatformFactory {
+
+    @Override
+    public void getCard(String groupId, String playerId, CardType type, int num) {
+
+    }
+
+    @Override
+    public void getAllNewCards(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void getPleadCard(String groupId, String playerId) {
+
+    }
 
     @Override
     public void listenForAction(String groupId, ActionListener actionListener) {
@@ -28,7 +44,7 @@ public class DesktopPlatformFactory implements PlatformFactory {
     public void getPlayers(String groupId, ActionListener actionListener) {
         List<Player> players = new ArrayList<>();
         for(int i = 0; i < 12; i++){
-            players.add(new Player("i", "PlayerNumber" + 1));
+            players.add(new Player(i + "", "PlayerNumber" + 1));
         }
         players.add(new Player("NMitIXWWEiXkHh2ZAzTO", "Gyro"));
         actionListener.onPlayersRetrieved(players);
@@ -36,6 +52,46 @@ public class DesktopPlatformFactory implements PlatformFactory {
 
     @Override
     public void sendStartAction(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendPlayExcuseCard(String groupId, String playerId, ExcuseCard excuseCard) {
+
+    }
+
+    @Override
+    public void sendPasarElMarron(String groupId, String playerId, ActionCard actionCard) {
+
+    }
+
+    @Override
+    public void sendInterrumpir(String groupId, String playerId, ExcuseCard excuseCard, ActionCard actionCard) {
+
+    }
+
+    @Override
+    public void sendPlead(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendGameOverAction(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendGameNotOverAction(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendPleadAcceptedAction(String groupId, String playerId) {
+
+    }
+
+    @Override
+    public void sendPleadDeniedAction(String groupId, String playerId) {
 
     }
 }

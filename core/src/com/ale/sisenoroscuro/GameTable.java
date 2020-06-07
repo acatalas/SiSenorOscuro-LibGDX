@@ -23,17 +23,16 @@ public class GameTable extends Game {
 
 	@Override
 	public void create() {
-		VisUI.load(Gdx.files.internal("uiskin.json"));
-		screen = new MasterGameScreen(platformFactory, group, me);
-		//screen = new SlaveGameScreen(platformFactory, group, me);
-
+		if(group.getMasterId().equals(me.getId())){
+			screen = new MasterGameScreen(platformFactory, group, me);
+		} else {
+			screen = new SlaveGameScreen(platformFactory, group, me);
+		}
 		setScreen(screen);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		screen.dispose();
-		VisUI.dispose();
 	}
 }

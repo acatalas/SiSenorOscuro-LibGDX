@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ale.sisenoroscuro.AndroidLauncher;
 import com.ale.sisenoroscuro.MasterGameActivity;
 import com.ale.sisenoroscuro.SlaveGameActivity;
 import com.ale.sisenoroscuro.classes.GroupDTO;
@@ -49,14 +50,16 @@ public class GroupSelectionActivity extends AppCompatActivity {
     }
 
     private void startSlaveBoardActivity(){
-        Intent intent = new Intent(GroupSelectionActivity.this, SlaveGameActivity.class);
+        Intent intent = new Intent(GroupSelectionActivity.this, AndroidLauncher.class);
         intent = addExtrasToIntent(intent);
+        intent.putExtra("role", "SLAVE");
         startActivity(intent);
     }
 
     private void startMasterBoardActivity(){
-        Intent intent = new Intent(GroupSelectionActivity.this, MasterGameActivity.class);
+        Intent intent = new Intent(GroupSelectionActivity.this, AndroidLauncher.class);
         intent = addExtrasToIntent(intent);
+        intent.putExtra("role", "MASTER");
         startActivity(intent);
     }
 

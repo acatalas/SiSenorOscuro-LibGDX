@@ -52,3 +52,10 @@ skull_button_pressed
   orig: 700, 370
   offset: 0, 0
   index: -1
+transparent
+  rotate: false
+  xy: 703, 691
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
