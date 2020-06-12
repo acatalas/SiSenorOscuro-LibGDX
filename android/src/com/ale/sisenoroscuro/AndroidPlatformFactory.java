@@ -1,6 +1,7 @@
 package com.ale.sisenoroscuro;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.ale.sisenoroscuro.classes.Action;
@@ -88,7 +89,7 @@ public class AndroidPlatformFactory implements PlatformFactory {
 
     @Override
     public void sendMiradaAction(String groupId, String playerId) {
-
+        getActionsRepository(groupId).sendMiradaAsesina(playerId);
     }
 
     @Override
@@ -142,4 +143,18 @@ public class AndroidPlatformFactory implements PlatformFactory {
         }
         return actionsRepository;
     }
+
+    @Override
+    public void goBackToMainMenu() {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    @Override
+    public void stopListeningForActions() {
+        actionsRepository.stopListeningForActions();
+    }
+
+
 }

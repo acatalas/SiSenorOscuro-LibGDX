@@ -2,6 +2,7 @@ package com.ale.sisenoroscuro.network;
 
 import android.content.Context;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 public class FirebaseHelper {
     public static final String GROUP_COLLECTION = "groups";
@@ -12,6 +13,11 @@ public class FirebaseHelper {
 
     private FirebaseHelper(Context context) {
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(false)
+                .build();
+        db.setFirestoreSettings(settings);
+
     }
 
     public static FirebaseHelper getInstance(Context context) {

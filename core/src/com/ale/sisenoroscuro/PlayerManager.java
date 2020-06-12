@@ -256,4 +256,8 @@ public class PlayerManager {
         }
         return false;
     }
+
+    public void removeOutCard(String player) {
+        getPlayer(player).removeOutCard();
+    }
 }

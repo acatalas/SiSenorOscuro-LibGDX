@@ -1,9 +1,13 @@
 package com.ale.sisenoroscuro.actors;
 
 import com.ale.sisenoroscuro.classes.Card;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class CardActor extends Image {
     private Drawable drawable;
@@ -23,7 +27,11 @@ public class CardActor extends Image {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        drawable.draw(batch, getX(), getY(), getWidth(), getHeight());
+        super.draw(batch, parentAlpha);
+    }
+
+    public Drawable getDrawable(){
+        return drawable;
     }
 
     public Card getCard(){

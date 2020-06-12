@@ -28,4 +28,8 @@ public interface PlatformFactory {
     void sendPleadDeniedAction(String groupId, String playerId);
 
     void sendMiradaAction(String groupId, String playerId);
+
+    void goBackToMainMenu();
+
+    void stopListeningForActions();
 }

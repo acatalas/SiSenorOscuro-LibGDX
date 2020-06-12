@@ -161,6 +161,10 @@ public class Player {
         removeAllExcuseCards();
     }
 
+    public void removeOutCard() {
+        numOutCards--;
+    }
+
     public void addOutCard(){
         numOutCards++;
     }
@@ -207,4 +211,6 @@ public class Player {
                 ", numOutCards=" + numOutCards +
                 '}';
     }
+
+
 }

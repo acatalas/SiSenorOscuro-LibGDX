@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.HttpUrl;
@@ -25,6 +26,7 @@ public class ActionsRepository {
 
     private final FirebaseHelper firebaseHelper;
     private final String groupId;
+    private ListenerRegistration actionListenerRegistration;
 
     public ActionsRepository(FirebaseHelper firebaseHelper, String groupId){
         this.firebaseHelper = firebaseHelper;
@@ -35,7 +37,13 @@ public class ActionsRepository {
         CollectionReference collectionReference = firebaseHelper.getDatabase()
                 .collection(FirebaseHelper.GROUP_COLLECTION).document(groupId)
                 .collection("actions");
-        collectionReference.addSnapshotListener(listener);
+        actionListenerRegistration = collectionReference.addSnapshotListener(listener);
+    }
+
+    public void stopListeningForActions(){
+        if(actionListenerRegistration != null){
+            actionListenerRegistration.remove();
+        }
     }
 
     public void sendStartAction(String startingPlayerId){

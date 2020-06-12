@@ -6,8 +6,6 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ale.sisenoroscuro.AndroidLauncher;
-import com.ale.sisenoroscuro.MasterGameActivity;
-import com.ale.sisenoroscuro.SlaveGameActivity;
 import com.ale.sisenoroscuro.classes.GroupDTO;
 import com.ale.sisenoroscuro.classes.GroupState;
 import com.ale.sisenoroscuro.classes.PlayerDTO;
@@ -36,11 +34,7 @@ public class GroupSelectionActivity extends AppCompatActivity {
                 group = snapshot.toObject(GroupDTO.class);
                 if(group.getState() == GroupState.COMPLETE && group.getMasterId() != null){
                     Log.d("APP_MASTER?", group.getMasterId() + " = " + me.getId());
-                    if(group.getMasterId().equals(me.getId())){
-                        startMasterBoardActivity();
-                    } else {
-                        startSlaveBoardActivity();
-                    }
+                    startBoardActivity();
                 }
             }
         };
@@ -49,17 +43,9 @@ public class GroupSelectionActivity extends AppCompatActivity {
                 .listenGroup(group.getId(), groupStateListener);
     }
 
-    private void startSlaveBoardActivity(){
+    private void startBoardActivity(){
         Intent intent = new Intent(GroupSelectionActivity.this, AndroidLauncher.class);
         intent = addExtrasToIntent(intent);
-        intent.putExtra("role", "SLAVE");
-        startActivity(intent);
-    }
-
-    private void startMasterBoardActivity(){
-        Intent intent = new Intent(GroupSelectionActivity.this, AndroidLauncher.class);
-        intent = addExtrasToIntent(intent);
-        intent.putExtra("role", "MASTER");
         startActivity(intent);
     }
 

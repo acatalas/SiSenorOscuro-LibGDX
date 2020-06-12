@@ -1,18 +1,32 @@
 package com.ale.sisenoroscuro.actors;
 
 
+import com.ale.sisenoroscuro.ActionGenerator;
+import com.ale.sisenoroscuro.CardDeckImageListener;
+import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.Card;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.kotcrab.vis.ui.VisUI;
 
 import java.util.ArrayList;
@@ -28,14 +42,18 @@ public class CardBoardActor extends HorizontalGroup {
     private float cardWidth = Gdx.graphics.getWidth() / 2 / 3;
     private float cardHeight = cardWidth * baseCardHeight / baseCardWidth;
 
+
+
     public CardBoardActor(TextureAtlas textureAtlas){
         this.textureAtlas = textureAtlas;
         cardActors = new ArrayList<>(NUM_CARDS);
         space(-20);
         align(Align.center);
+
+
     }
 
-    public void addCardActor(CardActor cardActor){
+    public void addCardActor(final CardActor cardActor){
         cardActors.add(cardActor);
         addActor(cardActor);
     }
@@ -54,10 +72,11 @@ public class CardBoardActor extends HorizontalGroup {
     }
 
     public void addCard(Card card){
-        CardActor cardActor = new CardActor(getCardTexture(card), cardWidth, cardHeight, card);
+        final CardActor cardActor = new CardActor(getCardTexture(card), cardWidth, cardHeight, card);
         cardActors.add(cardActor);
         addActor(cardActor);
 
+        //cardActor.addListener(new CardDeckImageListener(getStage(), cardActor.getDrawable()));
     }
 
     @Override

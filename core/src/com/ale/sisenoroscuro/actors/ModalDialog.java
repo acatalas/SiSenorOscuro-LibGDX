@@ -4,19 +4,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public class ModalDialog extends Window {
     private Skin skin;
-    public ModalDialog(Skin skin, Button button) {
+    public ModalDialog(Skin skin) {
         super("", skin.get(WindowStyle.class));
-        setSkin(skin);
         this.skin = skin;
-        initialize();
-    }
 
-    private void initialize () {
+        setSkin(skin);
         setModal(true);
-        setBackground(skin.getTiledDrawable("felt_tile"));
     }
 
     public void hide(){

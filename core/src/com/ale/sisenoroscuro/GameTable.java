@@ -31,8 +31,10 @@ public class GameTable extends Game {
 		setScreen(screen);
 	}
 
+
 	@Override
 	public void dispose() {
 		super.dispose();
+		screen.dispose();
 	}
 }

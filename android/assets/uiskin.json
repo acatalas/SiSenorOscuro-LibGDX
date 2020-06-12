@@ -98,8 +98,10 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
 	"default": {
+		"background": "felt_tile",
 		"titleFont": "blackcastle",
-		"titleFontColor": "white"
+		"titleFontColor": "white",
+		"stageBackground": "transparent"
 	}
 }
 }
