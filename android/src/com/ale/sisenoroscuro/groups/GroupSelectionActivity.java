@@ -44,6 +44,8 @@ public class GroupSelectionActivity extends AppCompatActivity {
     }
 
     private void startBoardActivity(){
+        groupRegistration.remove();
+
         Intent intent = new Intent(GroupSelectionActivity.this, AndroidLauncher.class);
         intent = addExtrasToIntent(intent);
         startActivity(intent);

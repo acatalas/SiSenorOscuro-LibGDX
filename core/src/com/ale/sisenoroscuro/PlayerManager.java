@@ -1,24 +1,26 @@
 package com.ale.sisenoroscuro;
 
-import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.ActionCard;
 import com.ale.sisenoroscuro.classes.Card;
 import com.ale.sisenoroscuro.classes.CardSubType;
 import com.ale.sisenoroscuro.classes.CardType;
-import com.ale.sisenoroscuro.classes.ExcuseCard;
 import com.ale.sisenoroscuro.classes.Player;
 
 import java.util.List;
 
 public class PlayerManager {
-    private String masterId;
+    private String masterName;
     private String playerId;
     private List<Player> players;
 
-    public PlayerManager(List<Player> players, String playerId, String masterId){
+    public PlayerManager(List<Player> players, String playerId, String masterName){
         this.players = players;
         this.playerId = playerId;
-        this.masterId = masterId;
+        this.masterName = masterName;
+    }
+
+    public String getMasterName(){
+        return masterName;
     }
 
     private int findPlayerIndex(String id){
@@ -32,36 +34,6 @@ public class PlayerManager {
 
     public boolean amIPlaying(){
         return getPlayer(playerId).isPlaying();
-    }
-
-    public void makeMeAvailable(){
-        getPlayer(playerId).setIsAvailable(true);
-    }
-
-    public void makeMeNotAvailable(){
-        getPlayer(playerId).setIsAvailable(false);
-    }
-
-    public void makeAllPlayersAvailable(){
-        for(Player player : players){
-            player.setIsAvailable(true);
-        }
-    }
-
-    public void makeAllButMeAndMasterAvailable(){
-        for(Player player : players){
-            if(player.getId().equals(masterId) || player.getId().equals(playerId)){
-                player.setIsAvailable(false);
-            } else {
-                player.setIsAvailable(true);
-            }
-        }
-    }
-
-    public void makeAllPlayersNotAvailable(){
-        for(Player player: players){
-            player.setIsAvailable(false);
-        }
     }
 
     public void playExcuseCard(String playerId){
@@ -104,7 +76,7 @@ public class PlayerManager {
         }
     }
 
-    public byte getNumberOfCardsOfPlayer(String playerId){
+    public byte getTotalNumberOfCards(String playerId){
         return getPlayer(playerId).getTotalCards();
     }
 

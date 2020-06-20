@@ -24,6 +24,7 @@ import java.util.List;
 
 
 public class GroupDetailFragment extends Fragment {
+    private TextView tvTitle;
     private RecyclerView recyclerView;
     private GroupPlayersFirestoreAdapter adapter;
     private int textAlignment;
@@ -40,6 +41,7 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        tvTitle = getView().findViewById(R.id.tv_players_title);
         recyclerView = getView().findViewById(R.id.rv_group_players);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -68,7 +70,7 @@ public class GroupDetailFragment extends Fragment {
 
 
     public void setSelectedGroup(String id, String groupName){
-        ((TextView)getView().findViewById(R.id.tv_players_title)).setText(groupName);
+        tvTitle.setText(groupName);
         setSelectedGroup(id);
     }
 

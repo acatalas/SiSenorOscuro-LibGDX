@@ -18,15 +18,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" android:screenOrientation="landscape" android:theme="@style/AppTheme.MainMenu"/>
-        <activity android:name=".SlaveGameActivity" android:screenOrientation="landscape" />
         <activity android:name=".groups.GroupSlaveSelectionActivity" android:screenOrientation="landscape"/>
         <activity android:name=".SettingsActivity"
             android:screenOrientation="landscape"/>
-        <activity android:name=".groups.GroupCreationActivity" android:screenOrientation="landscape" />
-        <activity android:name=".groups.GroupMasterSelectionActivity" android:screenOrientation="landscape" />
-        <activity android:name=".groups.GroupSelectionActivity" android:screenOrientation="landscape" />
-        <activity android:name=".MasterGameActivity" android:screenOrientation="landscape"/>
-        <activity android:name=".AndroidLauncher" android:screenOrientation="landscape"/>
+        <activity android:name=".groups.GroupCreationActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".groups.GroupMasterSelectionActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".groups.GroupSelectionActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".AndroidLauncher"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ale.sisenoroscuro.R;
+import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.GroupDTO;
 import com.ale.sisenoroscuro.network.FirebaseHelper;
 import com.ale.sisenoroscuro.network.GroupRepository;
@@ -41,9 +42,9 @@ public class GroupListFragment extends Fragment  {
 
         adapter = new GroupAdapter(options, getContext());
         adapter.setOnItemClickListener((v) -> {
-            String id = adapter.getSnapshots().getSnapshot(recyclerView.getChildAdapterPosition(v)).getId();
-            onGroupSelectedListener.onGroupSelected(id);
-            Log.d("APP", id);
+            GroupDTO selectedGroup = adapter.getSnapshots().getSnapshot(recyclerView.getChildAdapterPosition(v)).toObject(GroupDTO.class);
+            onGroupSelectedListener.onGroupSelected(selectedGroup.getId(), selectedGroup.getName());
+            Log.d("APP", selectedGroup.getId());
         });
 
         adapter.startListening();
@@ -57,6 +58,6 @@ public class GroupListFragment extends Fragment  {
     }
 
     public interface OnGroupSelectedListener {
-        void onGroupSelected(String id);
+        void onGroupSelected(String id, String name);
     }
 }

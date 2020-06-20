@@ -10,10 +10,10 @@ import com.ale.sisenoroscuro.classes.CardSubType;
 import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.ExcuseCard;
 import com.ale.sisenoroscuro.classes.Player;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class DesktopPlatformFactory implements PlatformFactory {
@@ -48,7 +48,26 @@ public class DesktopPlatformFactory implements PlatformFactory {
         actionListener.onActionReceived(new Action(ActionType.GET_CARD, new ActionCard(CardSubType.MARRON, true), "NMitIXWWEiXkHh2ZAzTO"));
 
         //START ACTION
-        //actionListener.onActionReceived(new Action(ActionType.START, "NMitIXWWEiXkHh2ZAzTO"));
+        actionListener.onActionReceived(new Action(ActionType.START, "NMitIXWWEiXkHh2ZAzTO"));
+
+        /*actionListener.onActionReceived(new Action(ActionType.MIRADA, "NMitIXWWEiXkHh2ZAzTO"));
+
+        //MIRADA ACTION
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                actionListener.onActionReceived(new Action(ActionType.MIRADA, "NMitIXWWEiXkHh2ZAzTO"));
+            }
+        }, 3);
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                actionListener.onActionReceived(new Action(ActionType.MIRADA, "NMitIXWWEiXkHh2ZAzTO"));
+            }
+        }, 6);*/
+
+        //actionListener.onActionReceived(new Action(ActionType.PLEAD, "NMitIXWWEiXkHh2ZAzTO"));
 
         //INTERRUMPIR ACTION
         //final List<Card> cards = new ArrayList<>();
@@ -60,9 +79,10 @@ public class DesktopPlatformFactory implements PlatformFactory {
     @Override
     public void getPlayers(String groupId, ActionListener actionListener) {
         List<Player> players = new ArrayList<>();
-        for(int i = 0; i < 12; i++){
-            players.add(new Player(i + "", "PlayerNumber" + 1));
+        for(int i = 0; i < 11; i++){
+            players.add(new Player(i + "Player" + i, "PlayerNumber" + 1));
         }
+        players.add(new Player("moPfqwjIfLDpBzcAszah", "PLIS"));
         players.add(new Player("NMitIXWWEiXkHh2ZAzTO", "Gyro"));
         actionListener.onPlayersRetrieved(players);
     }
@@ -118,7 +138,7 @@ public class DesktopPlatformFactory implements PlatformFactory {
     }
 
     @Override
-    public void goBackToMainMenu() {
+    public void finnishGame(String groupId, String playerId) {
 
     }
 

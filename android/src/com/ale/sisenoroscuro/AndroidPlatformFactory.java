@@ -2,7 +2,6 @@ package com.ale.sisenoroscuro;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.ActionCard;
@@ -145,7 +144,13 @@ public class AndroidPlatformFactory implements PlatformFactory {
     }
 
     @Override
-    public void goBackToMainMenu() {
+    public void finnishGame(String groupId, String playerId) {
+        actionsRepository.stopListeningForActions();
+
+        //Leave group
+        GroupRepository.leaveGroup(groupId, playerId);
+
+        //Leave activity
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

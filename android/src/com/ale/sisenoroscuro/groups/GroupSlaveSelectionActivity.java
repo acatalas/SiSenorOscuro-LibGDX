@@ -53,11 +53,11 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
     }
 
     @Override
-    public void onGroupSelected(String id) {
+    public void onGroupSelected(String id, String name) {
         if(btnJoinGroup.getTag().equals(JOIN_TAG)){
             group.setId(id);
             btnJoinGroup.setVisibility(View.VISIBLE);
-            groupDetailFragment.setSelectedGroup(group.getId());
+            groupDetailFragment.setSelectedGroup(group.getId(), name);
         }
     }
 
@@ -137,7 +137,6 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
             me.setName(dialogFragment.getPlayerName());
             joinGroup();
         }
-
     }
 }
 

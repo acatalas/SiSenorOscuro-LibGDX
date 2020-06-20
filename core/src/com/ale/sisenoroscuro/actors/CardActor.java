@@ -1,18 +1,14 @@
 package com.ale.sisenoroscuro.actors;
 
 import com.ale.sisenoroscuro.classes.Card;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class CardActor extends Image {
-    private Drawable drawable;
-    private Card card;
-    private float width, height;
+    private final Drawable drawable;
+    private final Card card;
+    private final float width, height;
 
 
     public CardActor(Drawable drawable, float width, float height, Card card){

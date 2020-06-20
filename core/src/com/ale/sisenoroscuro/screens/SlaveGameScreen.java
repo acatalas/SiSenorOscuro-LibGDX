@@ -3,7 +3,7 @@ package com.ale.sisenoroscuro.screens;
 import com.ale.sisenoroscuro.ActionListener;
 import com.ale.sisenoroscuro.Assets;
 import com.ale.sisenoroscuro.FontManager;
-import com.ale.sisenoroscuro.PlayerVisAdapter;
+import com.ale.sisenoroscuro.PlayerListAdapter;
 import com.ale.sisenoroscuro.actors.CardActor;
 import com.ale.sisenoroscuro.actors.CardBoardActor;
 import com.ale.sisenoroscuro.PlatformFactory;
@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SlaveGameScreen extends GameScreen implements Screen, ActionListener {
-    private static float ACTIVE_PLAYER_LABEL_FONT_SIZE = 28;
     private static float WIDTH_UNIT = SCREEN_WIDTH / 5; //128
     private static float HEIGHT_UNIT = SCREEN_HEIGHT / 5;
     private static float DIALOG_LIST_HEIGHT = HEIGHT_UNIT * 3;
@@ -111,6 +109,8 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         platformFactory.getPlayers(group.getId(), this);
 
         configureDragAndDrop();
+
+        modalDialog.show(stage);
     }
 
     protected void generateUIComponents(){
@@ -158,11 +158,12 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         modalDialog.add(playerListDetailView.getMainTable()).height(DIALOG_LIST_HEIGHT);
         modalDialog.row();
         modalDialog.add(playButton).size(WIDTH_UNIT, DIALOG_BUTTON_HEIGHT);
+        modalDialog.padTop(10).padBottom(10).padLeft(20).padRight(20);
     }
 
     @Override
     protected void generatePlayerListView(){
-        playerListAdapter = new PlayerVisAdapter(fontManager, players, Align.right);
+        playerListAdapter = new PlayerListAdapter(fontManager, players, Align.right);
         playerListView = new ListView<>(playerListAdapter);
         playerListView.getScrollPane().setFlickScroll(true);
         playerListView.getScrollPane().setScrollbarsOnTop(true);
@@ -171,7 +172,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     protected void generatePlayerDetailListView(){
-        playerListDetailAdapter = new PlayerVisAdapter(fontManager, playersMinusMe);
+        playerListDetailAdapter = new PlayerListAdapter(fontManager, playersMinusMe);
         playerListDetailView = new ListView<>(playerListDetailAdapter);
         playerListDetailView.setItemClickListener(new ListView.ItemClickListener<Player>() {
             @Override
@@ -218,12 +219,11 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     /**
      * Generates the vertical group that contains the active player label and the
      * cardStack.
-     * @return Max width of the label, used to set the width
      */
     private void generateCardStackGroup(){
 
         //Get width of label
-        GlyphLayout layout = new GlyphLayout(); //dont do this every frame! Store it as member
+        GlyphLayout layout = new GlyphLayout(); //don't do this every frame! Store it as member
         layout.setText(activePlayerLabel.getStyle().font, "Acknowledgement");
         STACK_CARD_GROUP_WIDTH = layout.width;
 
@@ -306,7 +306,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                 } else {
                     if(standbyCardActor == null){
                         standbyCardActor = selectedCardActor;
-                        //TODO: Show only cards that can be used; change border
                     } else {
                         if(standbyCardActor.getCard().getCardType() == CardType.EXCUSE){
                             platformFactory.sendInterrumpir(group.getId(),
@@ -319,6 +318,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                                     (ExcuseCard)selectedCardActor.getCard(),
                                     (ActionCard)standbyCardActor.getCard());
                         }
+                        standbyCardActor = null;
                     }
                 }
             }
@@ -371,7 +371,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void doStartAction(Action action){
-        showMessage(playerManager.getPlayerName(action.getPlayer()) + " starts!");
+        showMessage("The master, " + playerManager.getMasterName() + ", wants explanations from " + playerManager.getPlayerName(action.getPlayer()) + "!");
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         playerManager.setActivePlayer(action.getPlayer());
         playerListAdapter.itemsDataChanged();
@@ -400,16 +400,37 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     //passes turn to another player
     private void doPlayPasarAction(Action action) {
+
+        //
+        minNumPlays = (byte)(3 - playerManager.getActivePlayer().getNumExcuseCards());
+        numPlays = 0;
+
         playerManager.playPasarElMarronCard(playerManager.getActivePlayerId(), (ActionCard) action.getCard());
         playerManager.setActivePlayer(action.getPlayer());
         playerListAdapter.itemsDataChanged();
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         showMessage("It's " + playerManager.getPlayerName(action.getPlayer()) + "'s turn");
 
+        System.out.println(playerManager.getNumberOfActionCards(player.getId()));
+
         //If I'm receiving my turn
-        if(player.getId().equals(action.getPlayer()) && playerManager.getNumberOfActionCards(player.getId()) < 3){
+        if(player.getId().equals(action.getPlayer()) &&
+                playerManager.getNumberOfActionCards(player.getId()) < 3){
+            System.out.println("ASKING FOR ACTION CARD");
             platformFactory.getCard(group.getId(), player.getId(), CardType.ACTION);
         }
+
+
+
+        //if was playing interrumpir card, bring back to hand
+        /*if(standbyCardActor != null){
+            if(standbyCardActor.getCard().getCardType() == CardType.EXCUSE){
+                excuseCardsBoard.addCardActor(standbyCardActor);
+            } else {
+                actionCardsBoard.addCardActor(standbyCardActor);
+            }
+            standbyCardActor = null;
+        }*/
     }
 
     private void doPlayInterrumpirAction(Action action) {
@@ -440,8 +461,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
         playerListAdapter.itemsDataChanged();
 
-        showPlayAndHideCardAnimation("m" + playerManager.getNumOutCards(action.getPlayer()));
-
         //If I'm the player receiving the out card
         if(action.getPlayer().equals(player.getId())){
 
@@ -449,20 +468,29 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
             miradaImages[playerManager.getNumOutCards(player.getId()) - 1].showCard();
 
             if(numOutCards < 3){
+                showPlayAndHideCardAnimation("m" + playerManager.getNumOutCards(action.getPlayer()));
+
                 //Ask for all new cards
                 actionCardsBoard.removeAllCards();
                 excuseCardsBoard.removeAllCards();
 
                 platformFactory.getAllNewCards(group.getId(), player.getId());
             } else {
-                showContextualButton(new TextButton("Plead", textButtonStyle), new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        platformFactory.sendPlead(group.getId(), player.getId());
-                        ((ModalDialog)event.getTarget().getParent()).hide();
-                    }
-                }, 1.5f);
+                showPlayAndHideCardAnimation("m" + playerManager.getNumOutCards(action.getPlayer()),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                showContextualButton(new TextButton("Plead", textButtonStyle), new ChangeListener() {
+                                    @Override
+                                    public void changed(ChangeEvent event, Actor actor) {
+                                        platformFactory.sendPlead(group.getId(), player.getId());
+                                        ((ModalDialog)event.getTarget().getParent()).hide();
+                                    }}, 1.5f);
+                            }
+                        });
             }
+        } else {
+            showPlayAndHideCardAnimation("m" + playerManager.getNumOutCards(action.getPlayer()));
         }
     }
 
@@ -475,15 +503,23 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void doPleadAcceptedAction(Action action) {
-        showMessage("PLEAD ACCEPTED!");
+
         if(player.getId().equals(action.getPlayer())){
-            showContextualButton(new TextButton("Get action card", textButtonStyle), new ChangeListener() {
+
+            showMessage("PLEAD ACCEPTED!", new Runnable() {
                 @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    platformFactory.getPleadCard(group.getId(), player.getId());
-                    ((ModalDialog)event.getTarget().getParent()).hide();
+                public void run() {
+                    showContextualButton(new TextButton("Get action card", textButtonStyle), new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            platformFactory.getPleadCard(group.getId(), player.getId());
+                            ((ModalDialog)event.getTarget().getParent()).hide();
+                        }
+                    }, 2f);
                 }
-            }, 2f);
+            });
+        } else {
+            showMessage("PLEAD ACCEPTED!");
         }
     }
 
@@ -507,6 +543,15 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         playerManager.removeOutCard(action.getPlayer());
         playerManager.setPleadingPlayer(action.getPlayer(), false);
         playerListAdapter.itemsChanged();
+
+        if(player.getId().equals(action.getPlayer())){
+            miradaImages[2].hideCard();
+            //Ask for all new cards
+            actionCardsBoard.removeAllCards();
+            excuseCardsBoard.removeAllCards();
+
+            platformFactory.getAllNewCards(group.getId(), player.getId());
+        }
     }
 
     private void doGameOverAction(Action action) {
@@ -516,19 +561,22 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     @Override
     public void onPlayersRetrieved(List<Player> players) {
+        String masterName = "";
         for(Player p : players){
             if(!p.getId().equals(group.getMasterId())){
                 this.players.add(p);
                 if(!p.getId().equals(player.getId())){
                     this.playersMinusMe.add(p);
                 }
+            } else {
+                masterName = p.getName();
             }
         }
 
         playerListAdapter.itemsChanged();
         playerListDetailAdapter.itemsChanged();
 
-        playerManager = new PlayerManager(players, group.getId(), group.getMasterId());
+        playerManager = new PlayerManager(players, group.getId(), masterName);
         platformFactory.listenForAction(group.getId(), this);
     }
 

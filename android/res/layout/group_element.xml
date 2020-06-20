@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rv_group_selector"
+    android:layout_centerInParent="false"
+    android:layout_centerHorizontal="false"
+    android:layout_centerVertical="false"
     android:orientation="vertical"
     android:paddingTop="@dimen/rv_padding"
     android:paddingBottom="@dimen/rv_padding">
@@ -25,5 +28,19 @@
         android:text="@string/group_name"
         android:textColor="@android:color/black"
         android:textSize="@dimen/medium_text" />
+
+    <ImageView
+        android:id="@+id/iv_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/medium_text"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_alignStart="@id/group_name"
+        android:layout_alignEnd="@id/group_players"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="false"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginEnd="2dp"
+        android:baselineAlignBottom="false" />
 
 </RelativeLayout>

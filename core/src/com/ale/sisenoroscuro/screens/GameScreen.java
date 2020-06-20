@@ -6,7 +6,7 @@ import com.ale.sisenoroscuro.FontManager;
 import com.ale.sisenoroscuro.CardStackImageListener;
 import com.ale.sisenoroscuro.PlatformFactory;
 import com.ale.sisenoroscuro.PlayerManager;
-import com.ale.sisenoroscuro.PlayerVisAdapter;
+import com.ale.sisenoroscuro.PlayerListAdapter;
 import com.ale.sisenoroscuro.actors.CurrentCardStackActor;
 import com.ale.sisenoroscuro.classes.Card;
 import com.ale.sisenoroscuro.classes.Group;
@@ -20,7 +20,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -48,15 +47,15 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import java.util.ArrayList;
 
 public abstract class GameScreen implements Screen {
-    protected static float SCREEN_WIDTH = Gdx.graphics.getWidth();
-    protected static float SCREEN_HEIGHT = Gdx.graphics.getHeight();
-    protected static float MESSAGE_PAN_HEIGHT = SCREEN_HEIGHT / 5;
-    protected static float CARD_STACK_HEIGHT = SCREEN_HEIGHT / 5 * 0.75f;
-    protected static float BUTTON_PADDING_TOP = SCREEN_HEIGHT / 5 / 2;
-    protected static float BUTTON_PADDING_BOTTOM = SCREEN_HEIGHT / 5 / 2;
-    protected static float BUTTON_PADDING_LEFT = SCREEN_WIDTH / 5 / 2;
-    protected static float BUTTON_PADDING_RIGHT = SCREEN_WIDTH / 5 / 2;
-    protected static float BUTTON_HEIGHT = SCREEN_HEIGHT / 5 * 1.25f;
+    protected static final float SCREEN_WIDTH = Gdx.graphics.getWidth();
+    protected static final float SCREEN_HEIGHT = Gdx.graphics.getHeight();
+    protected static final float MESSAGE_PAN_HEIGHT = SCREEN_HEIGHT / 5;
+    protected static final float CARD_STACK_HEIGHT = SCREEN_HEIGHT / 5 * 0.75f;
+    protected static final float BUTTON_PADDING_TOP = SCREEN_HEIGHT / 5 / 2;
+    protected static final float BUTTON_PADDING_BOTTOM = SCREEN_HEIGHT / 5 / 2;
+    protected static final float BUTTON_PADDING_LEFT = SCREEN_WIDTH / 5 / 2;
+    protected static final float BUTTON_PADDING_RIGHT = SCREEN_WIDTH / 5 / 2;
+    protected static final float BUTTON_HEIGHT = SCREEN_HEIGHT / 5 * 1.25f;
 
     protected PlatformFactory platformFactory;
 
@@ -71,7 +70,6 @@ public abstract class GameScreen implements Screen {
 
     protected FontManager fontManager;
     protected AssetManager assetManager;
-    protected ShapeRenderer debug;
 
     protected ArrayListAdapter<Player, VisTable> playerListAdapter;
     protected ListView<Player> playerListView;
@@ -107,7 +105,6 @@ public abstract class GameScreen implements Screen {
         this.assetManager = new AssetManager();
         this.fontManager = new FontManager(assetManager);
         this.skin = VisUI.getSkin();
-        this.platformFactory = platformFactory;
         this.group = group;
         this.player = me;
         players = new ArrayList<>();
@@ -115,7 +112,6 @@ public abstract class GameScreen implements Screen {
     }
     @Override
     public void show() {
-        debug = new ShapeRenderer();
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
         stage = new Stage(viewport);
@@ -162,7 +158,7 @@ public abstract class GameScreen implements Screen {
             VisUI.dispose();
         }
         stage.dispose();
-        platformFactory.stopListeningForActions();
+        //platformFactory.stopListeningForActions();
     }
 
     protected void generateUIComponents(){
@@ -172,7 +168,7 @@ public abstract class GameScreen implements Screen {
     }
 
     protected void generatePlayerListView(){
-        playerListAdapter = new PlayerVisAdapter(fontManager, players);
+        playerListAdapter = new PlayerListAdapter(fontManager, players);
         playerListView = new ListView<>(playerListAdapter);
         playerListView.getScrollPane().setFlickScroll(true);
         playerListView.getScrollPane().setScrollbarsOnTop(true);
@@ -261,6 +257,39 @@ public abstract class GameScreen implements Screen {
     }
 
     protected void showMessage(String message){
+        final Container<VisLabel> messageContainer = prepareMessage(message);
+        messageContainer.addAction(
+                Actions.sequence(
+                    ActionGenerator.getPanDownAndScaleUpAction(-MESSAGE_PAN_HEIGHT, 1),
+                    Actions.delay(4),
+                    Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        messageContainer.remove();
+                        transparentOverlay.remove();
+                    }
+                })
+        ));
+    }
+
+    protected void showMessage(String message, Runnable postAction){
+        final Container<VisLabel> messageContainer = prepareMessage(message);
+        messageContainer.addAction(
+                Actions.sequence(
+                        ActionGenerator.getPanDownAndScaleUpAction(-MESSAGE_PAN_HEIGHT, 1),
+                        Actions.delay(4),
+                        Actions.parallel(
+                                Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        messageContainer.remove();
+                                        transparentOverlay.remove();
+                                    }}),
+                                Actions.run(postAction))
+                ));
+    }
+
+    private Container<VisLabel> prepareMessage(String message){
         final VisLabel label = new VisLabel(message, messageLabelStyle);
         label.setAlignment(Align.center);
         label.setWrap(true);
@@ -275,25 +304,12 @@ public abstract class GameScreen implements Screen {
         labelContainer.setScale(0.5f);
 
         stage.addActor(labelContainer);
-        labelContainer.addAction(Actions.sequence(
-                ActionGenerator.getPanDownAndScaleUpAction(-MESSAGE_PAN_HEIGHT, 1),
-                Actions.delay(4),
-                Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        labelContainer.remove();
-                        transparentOverlay.remove();
-                    }
-                })
-        ));
+
+        return labelContainer;
     }
 
     public void showPlayAndHideCardAnimation(String name){
-        cardImage = new Image(textureAtlas.findRegion(name));
-        cardImage.setHeight(currentCardStackActor.getImageHeight());
-        cardImage.setScaling(Scaling.fit);
-        cardImage.setOrigin(Align.center);
-        cardImage.setPosition(SCREEN_WIDTH/2 - cardImage.getWidth()/2, SCREEN_HEIGHT/2 - cardImage.getHeight()/2);
+        prepareShowPlayAndHideAnimation(name);
         cardImage.addAction(Actions.sequence(
                 ActionGenerator.getShowCardAction(),
                 Actions.delay(2),
@@ -303,8 +319,33 @@ public abstract class GameScreen implements Screen {
                         cardImage.remove();
                     }
                 })));
+    }
+
+    public void showPlayAndHideCardAnimation(String name, Runnable postAction){
+        prepareShowPlayAndHideAnimation(name);
+        cardImage.addAction(Actions.sequence(
+                ActionGenerator.getShowCardAction(),
+                Actions.delay(2),
+                Actions.parallel(
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                cardImage.remove();
+                            }}),
+                        Actions.run(postAction))
+                ));
+
+    }
+
+    private void prepareShowPlayAndHideAnimation(String name){
+        cardImage = new Image(textureAtlas.findRegion(name));
+        cardImage.setHeight(currentCardStackActor.getImageHeight());
+        cardImage.setScaling(Scaling.fit);
+        cardImage.setOrigin(Align.center);
+        cardImage.setPosition(SCREEN_WIDTH/2 - cardImage.getWidth()/2, SCREEN_HEIGHT/2 - cardImage.getHeight()/2);
         stage.addActor(cardImage);
     }
+
 
     protected void showGameOverMessage(String reason){
         stage.addActor(transparentOverlay);
@@ -339,7 +380,7 @@ public abstract class GameScreen implements Screen {
                                                 Actions.run(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        platformFactory.goBackToMainMenu();
+                                                        platformFactory.finnishGame(group.getId(), player.getId());
                                                     }
                                                 }))
                                 );

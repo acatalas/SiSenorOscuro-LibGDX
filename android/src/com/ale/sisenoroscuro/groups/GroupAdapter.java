@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -32,12 +33,14 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView tvGroupName;
         public final TextView tvPlayers;
+        public final ImageView isSelected;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             tvGroupName = itemView.findViewById(R.id.group_name);
             tvPlayers = itemView.findViewById(R.id.group_players);
+            isSelected = itemView.findViewById(R.id.iv_selected);
         }
 
         @Override
@@ -62,6 +65,8 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
     protected void onBindViewHolder(@NonNull ViewHolder holder, int i, @NonNull GroupDTO group) {
         holder.tvPlayers.setText(resources.getString(R.string.num_players_max_players, group.getNumPlayers(), group.getMaxPlayers()));
         holder.tvGroupName.setText(group.getName());
-        holder.itemView.setSelected(selectedPos == i);
+        if(selectedPos == i){
+            holder.isSelected.setImageResource(R.drawable.selected_arrow);
+        }
     }
 }

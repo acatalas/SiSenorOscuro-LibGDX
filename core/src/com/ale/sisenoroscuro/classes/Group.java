@@ -63,20 +63,8 @@ public class Group {
         return numPlayers;
     }
 
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-    }
-
     public int getMaxPlayers() {
         return maxPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
-
-    public GroupState getState() {
-        return state;
     }
 
     public void setState(GroupState state) {

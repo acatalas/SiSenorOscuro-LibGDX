@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="min_players">4</integer>
+    <integer name="min_players">3</integer>
     <integer name="max_players">16</integer>
     <integer name="min_group_name_chars">1</integer>
     <integer name="max_group_name_chars">50</integer>
     <integer name="min_player_name_chars">1</integer>
-    <integer name="max_player_name_chars">20</integer>
+    <integer name="max_player_name_chars">15</integer>
 </resources>

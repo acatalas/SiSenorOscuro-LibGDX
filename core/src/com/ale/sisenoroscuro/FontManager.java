@@ -14,11 +14,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 public class FontManager {
     public static final float MESSAGE_LABEL_FONT_SIZE = 50;
     public static final float BUTTON_FONT_SIZE = 30;
+    public static final float PLAYER_LABEL_FONT_SIZE = 22;
     private static final String BLACKCASTLE_FONT = "blackcastlemf";
     public static final String GREAT_VIBES_FONT = "greatvibes";
     public static final String GREAT_VIBES_FONT_FILE_NAME = GREAT_VIBES_FONT + ".ttf";
     public static final String BLACKCASTLE_FONT_FILE_NAME = BLACKCASTLE_FONT + ".ttf";
-    private AssetManager assetManager;
+    private final AssetManager assetManager;
 
     public FontManager(AssetManager assetManager){
         FreeTypeFontGenerator.setMaxTextureSize(2048);

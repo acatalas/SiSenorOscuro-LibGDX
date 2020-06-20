@@ -10,6 +10,8 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 public class AndroidLauncher extends AndroidApplication {
+	private Group group;
+	private Player player;
 	private Game gameTable;
 	private PlatformFactory platformFactory;
 
@@ -21,15 +23,15 @@ public class AndroidLauncher extends AndroidApplication {
 
 		Bundle extras = getIntent().getExtras();
 
-		/*Group group = new Group(extras.getString("groupId"),
+		group = new Group(extras.getString("groupId"),
 				extras.getString("playerName"),
 				extras.getString("masterId"),
 				extras.getInt("numPlayers"),
 				extras.getInt("numPlayers"),
 				GroupState.COMPLETE);
 
-		Player player = new Player(extras.getString("playerId"),
-				extras.getString("playerName"));*/
+		player = new Player(extras.getString("playerId"),
+				extras.getString("playerName"));
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.hideStatusBar = true;
@@ -38,9 +40,9 @@ public class AndroidLauncher extends AndroidApplication {
 		config.useWakelock = true;
 
 		//String id, String name, String masterId, int numPlayers, int maxPlayers, GroupState state
-		Group group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
-		group.setMasterId("i5ogRmhGHU0W4RVqfFQf");
-		Player player = new Player("9HvZNqOCjhnH86oG7dcv", "Acknowledgement");
+		//Group group = new Group("XbhBIbkFsPmB0qp4zjZQ", "Aaaa", 4, 4, GroupState.COMPLETE);
+		//group.setMasterId("i5ogRmhGHU0W4RVqfFQf");
+		//Player player = new Player("9HvZNqOCjhnH86oG7dcv", "Acknowledgement");
 		gameTable = new GameTable(platformFactory, group, player);
 		initialize(gameTable, config);
 	}
@@ -53,6 +55,5 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	public void onBackPressed() {
-		//TODO: SHOW EXIT SCREEN ??
 	}
 }

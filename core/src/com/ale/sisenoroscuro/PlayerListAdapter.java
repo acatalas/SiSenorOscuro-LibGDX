@@ -1,13 +1,9 @@
 package com.ale.sisenoroscuro;
 
-import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.Player;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,13 +16,12 @@ import com.kotcrab.vis.ui.widget.VisTable;
 
 import java.util.ArrayList;
 
-public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
+public class PlayerListAdapter extends ArrayListAdapter<Player, VisTable> {
     private Color selectedColor;
     private Color availableColor;
     private Color unavailableColor;
     private BitmapFont font;
     private Label.LabelStyle labelStyle;
-    private final float fontSize = 22;
     private final int numImages = 6;
     private final float baseImageWidth = 15;
     private final float baseImageHeight = 22;
@@ -40,12 +35,12 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
 
     private int alignment = Align.left;
 
-    public PlayerVisAdapter(FontManager fontManager, ArrayList<Player> array) {
+    public PlayerListAdapter(FontManager fontManager, ArrayList<Player> array) {
         super(array);
-        font = fontManager.getGreatVibesFont(fontSize);
+        font = fontManager.getGreatVibesFont(FontManager.PLAYER_LABEL_FONT_SIZE);
         labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        GlyphLayout layout = new GlyphLayout(); //dont do this every frame! Store it as member
+        GlyphLayout layout = new GlyphLayout(); //don't do this every frame! Store it as member
         layout.setText(font, "Acknowledgement");
         labelWidth = layout.width;
         layout.setText(font,"0");
@@ -62,7 +57,7 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
         unavailableColor = Color.GRAY;
     }
 
-    public PlayerVisAdapter(FontManager fontManager, ArrayList<Player> array, int alignment) {
+    public PlayerListAdapter(FontManager fontManager, ArrayList<Player> array, int alignment) {
         this(fontManager, array);
         this.alignment = alignment;
     }
@@ -79,7 +74,6 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
             nameLabel.setColor(unavailableColor);
         }
         table.add(nameLabel).width(labelWidth).padRight(20).left();
-        //table.add(new VisLabel(player.getName())).width(labelWidth).padRight(5).left();
 
         HorizontalGroup group = new HorizontalGroup();
         group.space(spacing);
@@ -144,10 +138,10 @@ public class PlayerVisAdapter extends ArrayListAdapter<Player, VisTable> {
         VisLabel miradasLabel = (VisLabel) view.getCells().get(2).getActor();
         int numMiradas = Integer.parseInt(miradasLabel.getText().toString());
         if(numMiradas != player.getNumOutCards()){
-            if(player.getNumOutCards() == 2){
-                miradasLabel.setColor(Color.RED);
-            }
             miradasLabel.setText( player.getNumOutCards() + "");
+        }
+        if(player.getNumOutCards() == 2){
+            miradasLabel.setColor(Color.RED);
         }
     }
 }

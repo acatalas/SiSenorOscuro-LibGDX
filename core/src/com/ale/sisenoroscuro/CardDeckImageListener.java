@@ -1,14 +1,11 @@
 package com.ale.sisenoroscuro;
 
-import com.ale.sisenoroscuro.actors.CardActor;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
@@ -17,8 +14,8 @@ import com.badlogic.gdx.utils.Timer;
 public class CardDeckImageListener extends InputListener {
     private Image popUpImage;
     private Stage stage;
-    private boolean wasDragged;
-    private boolean isShowing;
+    private volatile boolean dragged = false;
+    private volatile boolean showing = false;
 
     public CardDeckImageListener(Stage stage, Drawable cardDrawable){
         this.stage = stage;
@@ -31,36 +28,48 @@ public class CardDeckImageListener extends InputListener {
 
     @Override
     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        Timer.schedule(new Timer.Task() {
+        System.out.println("CLICKED");
+        stage.addAction(Actions.delay(0.5f, Actions.run(new Runnable() {
             @Override
             public void run() {
-                if(!wasDragged){
-                    isShowing = true;
+                System.out.println("WAS DRAGGED?" + dragged);
+                if(!dragged){
                     stage.addActor(popUpImage);
                     popUpImage.addAction(Actions.scaleBy(1.4f, 1.4f));
+                    showing = true;
                 }
-                wasDragged = false;
+                dragged = false;
             }
-        }, 0.8f);
-
+        })));
         return true;
     }
 
     @Override
-    public void touchDragged(InputEvent event, float x, float y, int pointer) {
-        if(isShowing){
-            wasDragged = false;
+    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        boolean inX = x >= 0 && x < popUpImage.getWidth();
+        boolean inY = y >= 0 && y < popUpImage.getHeight();
+        if(inX && inY){
+            System.out.println("IMAGE WAS NOT DRAGGED");
+            dragged = false;
         } else {
-            wasDragged = true;
+            if(showing){
+                System.out.println("IMAGE WAS DRAGGED WHEN SHOWING");
+                dragged = false;
+            } else {
+                System.out.println("IMAGE WAS DRAGGED WHEN NOT SHOWING");
+                dragged = true;
+            }
         }
+        popUpImage.remove();
+        popUpImage.addAction(Actions.scaleTo(1, 1));
+        System.out.println("TOUCH UP | dragged is " + dragged);
+        showing = false;
     }
 
     @Override
-    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        isShowing = false;
-        popUpImage.remove();
-        popUpImage.addAction(Actions.scaleTo(1, 1));
+    public void touchDragged(InputEvent event, float x, float y, int pointer) {
+        super.touchDragged(event, x, y, pointer);
+        dragged = true;
+        System.out.println("DRAGGED | dragged is " + dragged);
     }
-
-
 }

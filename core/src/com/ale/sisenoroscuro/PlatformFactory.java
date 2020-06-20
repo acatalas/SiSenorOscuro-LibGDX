@@ -1,8 +1,6 @@
 package com.ale.sisenoroscuro;
 
-import com.ale.sisenoroscuro.classes.Action;
 import com.ale.sisenoroscuro.classes.ActionCard;
-import com.ale.sisenoroscuro.classes.Card;
 import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.ExcuseCard;
 
@@ -29,7 +27,7 @@ public interface PlatformFactory {
 
     void sendMiradaAction(String groupId, String playerId);
 
-    void goBackToMainMenu();
+    void finnishGame(String groupId, String playerId);
 
     void stopListeningForActions();
 }

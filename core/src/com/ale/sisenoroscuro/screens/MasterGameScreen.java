@@ -23,12 +23,12 @@ import com.kotcrab.vis.ui.widget.ListView;
 import java.util.List;
 
 public class MasterGameScreen extends GameScreen implements Screen, ActionListener {
-    private static float ACTIVE_PLAYER_LABEL_FONT_SIZE = 50;
-    private static float HEIGHT_UNIT = SCREEN_HEIGHT / 7;
-    private static float TABLE_HEIGHT = HEIGHT_UNIT * 4;
-    private static float HEADER_HEIGHT = HEIGHT_UNIT * 1;
-    private static float FOOTER_HEIGHT = HEIGHT_UNIT * 2;
-    private static float WIDTH_UNIT = SCREEN_WIDTH / 5; //128
+    private static final float ACTIVE_PLAYER_LABEL_FONT_SIZE = 50;
+    private static final float HEIGHT_UNIT = SCREEN_HEIGHT / 7;
+    private static final float TABLE_HEIGHT = HEIGHT_UNIT * 4;
+    private static final float HEADER_HEIGHT = HEIGHT_UNIT * 1;
+    private static final float FOOTER_HEIGHT = HEIGHT_UNIT * 2;
+    private static final float WIDTH_UNIT = SCREEN_WIDTH / 5; //128
 
     private final ModalDialog modalDialog;
     private TextButton btnMiradaAsesina;
@@ -207,6 +207,9 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
     }
 
     private void doPlayPasarAction(Action action) {
+        minNumPlays = (byte)(3 - playerManager.getActivePlayer().getNumExcuseCards());
+        numPlays = 0;
+
         playerManager.playPasarElMarronCard(playerManager.getActivePlayerId(), (ActionCard) action.getCard());
         playerManager.setActivePlayer(action.getPlayer());
         playerListAdapter.itemsDataChanged();
@@ -244,8 +247,12 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
     }
 
     private void doPleadAction(Action action) {
-        showMessage(playerManager.getPlayerName(action.getPlayer()) + " is pleading your forgiveness");
-        showAcceptAndDenyModal();
+        showMessage("is pleading your forgiveness", new Runnable() {
+            @Override
+            public void run() {
+                showAcceptAndDenyModal();
+            }
+        });
     }
 
     private void doPleadNotAcceptedAction(Action action) {
@@ -257,6 +264,7 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
     }
 
     private void doGameNotOverAction(Action action) {
+        showMessage("Safe... for now");
         playerManager.resetPlayerTurn(player.getId());
         playerManager.removeOutCard(action.getPlayer());
         playerManager.setPleadingPlayer(action.getPlayer(), false);
