@@ -1,7 +1,6 @@
 package com.ale.sisenoroscuro.classes;
 
 import com.google.firebase.firestore.DocumentId;
-import com.google.firebase.firestore.Exclude;
 
 import org.jetbrains.annotations.NotNull;
 

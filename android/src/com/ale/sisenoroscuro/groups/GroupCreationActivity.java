@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ale.sisenoroscuro.PreferencesManager;
 import com.ale.sisenoroscuro.R;
 import com.ale.sisenoroscuro.classes.Group;
-import com.ale.sisenoroscuro.classes.GroupDTO;
 import com.ale.sisenoroscuro.classes.Player;
-import com.ale.sisenoroscuro.classes.PlayerDTO;
 import com.ale.sisenoroscuro.network.FirebaseHelper;
 import com.ale.sisenoroscuro.network.GroupRepository;
 

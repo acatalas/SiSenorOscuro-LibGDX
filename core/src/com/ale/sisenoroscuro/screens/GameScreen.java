@@ -18,8 +18,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -59,8 +57,6 @@ public abstract class GameScreen implements Screen {
 
     protected PlatformFactory platformFactory;
 
-    protected TextureAtlas textureAtlas;
-
     protected Stage stage;
     protected Viewport viewport;
     protected Camera camera;
@@ -98,7 +94,6 @@ public abstract class GameScreen implements Screen {
             VisUI.load(Gdx.files.internal("uiskin.json"));
         }
 
-        this.textureAtlas = new TextureAtlas("cards.atlas");
         this.currentCardImage = new Image();
 
         this.platformFactory = platformFactory;
@@ -153,7 +148,6 @@ public abstract class GameScreen implements Screen {
     @Override
     public void dispose() {
         assetManager.dispose();
-        textureAtlas.dispose();
         if(VisUI.isLoaded()){
             VisUI.dispose();
         }
@@ -221,7 +215,18 @@ public abstract class GameScreen implements Screen {
 
     protected void loadAssets(){
         assetManager.load(Assets.wood, Texture.class);
-        assetManager.update();
+        assetManager.load(Assets.mirada1, Texture.class);
+        assetManager.load(Assets.mirada2, Texture.class);
+        assetManager.load(Assets.mirada3, Texture.class);
+        assetManager.load(Assets.reverso, Texture.class);
+        for(int i = 1; i <= 80; i++){
+            assetManager.load("e" + i + ".png", Texture.class);
+        }
+        assetManager.load("aas.png", Texture.class);
+        assetManager.load("ain.png", Texture.class);
+        assetManager.load("ais.png", Texture.class);
+        assetManager.load("apn.png", Texture.class);
+        assetManager.load("aps.png", Texture.class);
         assetManager.finishLoading();
     }
 
@@ -235,7 +240,11 @@ public abstract class GameScreen implements Screen {
             currentCardImage.remove();
         }
 
-        currentCardImage = new Image(textureAtlas.findRegion(card.getFullName()));
+        if(!assetManager.isLoaded(card.getFullName() + ".png")){
+            assetManager.load(card.getFullName() + ".png", Texture.class);
+            assetManager.finishLoading();
+        }
+        currentCardImage = new Image(assetManager.get(card.getFullName() + ".png", Texture.class));
         currentCardImage.setHeight(currentCardStackActor.getImageHeight());
         currentCardImage.setScaling(Scaling.fit);
         currentCardImage.setOrigin(Align.center);
@@ -338,7 +347,11 @@ public abstract class GameScreen implements Screen {
     }
 
     private void prepareShowPlayAndHideAnimation(String name){
-        cardImage = new Image(textureAtlas.findRegion(name));
+        if(!assetManager.isLoaded(name + ".png")){
+            assetManager.load(name + ".png", Texture.class);
+            assetManager.finishLoading();
+        }
+        cardImage = new Image(assetManager.get(name + ".png", Texture.class));
         cardImage.setHeight(currentCardStackActor.getImageHeight());
         cardImage.setScaling(Scaling.fit);
         cardImage.setOrigin(Align.center);

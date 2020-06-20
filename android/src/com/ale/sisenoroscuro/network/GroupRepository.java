@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.GroupDTO;
-import com.ale.sisenoroscuro.classes.Player;
 import com.ale.sisenoroscuro.classes.PlayerDTO;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;

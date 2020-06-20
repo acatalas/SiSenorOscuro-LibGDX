@@ -268,6 +268,11 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
         playerManager.resetPlayerTurn(player.getId());
         playerManager.removeOutCard(action.getPlayer());
         playerManager.setPleadingPlayer(action.getPlayer(), false);
+
+        minNumPlays = 6;
+        numPlays = 0;
+        playerManager.getRidOfAllCards(action.getPlayer());
+
         playerListAdapter.itemsChanged();
     }
 

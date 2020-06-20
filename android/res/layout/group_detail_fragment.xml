@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="@dimen/h_padding"
-    android:paddingLeft="@dimen/v_padding"
     android:paddingTop="@dimen/v_padding"
     android:paddingEnd="@dimen/h_padding">
 

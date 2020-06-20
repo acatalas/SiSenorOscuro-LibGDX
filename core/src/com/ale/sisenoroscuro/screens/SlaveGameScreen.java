@@ -19,8 +19,8 @@ import com.ale.sisenoroscuro.classes.ExcuseCard;
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.Player;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -71,7 +71,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     public SlaveGameScreen(final PlatformFactory platformFactory, final Group group, Player me){
         super(platformFactory, group, me);
-        this.textureAtlas = new TextureAtlas("cards.atlas");
         this.playersMinusMe = new ArrayList<>();
         this.currentCardImage = new Image();
     }
@@ -109,8 +108,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         platformFactory.getPlayers(group.getId(), this);
 
         configureDragAndDrop();
-
-        modalDialog.show(stage);
     }
 
     protected void generateUIComponents(){
@@ -195,19 +192,19 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void generateMiradaCardImages(){
-        TextureAtlas.AtlasRegion miradaCardRegion = textureAtlas.findRegion(Assets.mirada1);
-        MIRADA_CARD_HEIGHT = MIRADA_CARD_WIDTH * miradaCardRegion.getRegionHeight() / miradaCardRegion.getRegionWidth();
+        Texture mirada1 = assetManager.get(Assets.mirada1, Texture.class);
+        MIRADA_CARD_HEIGHT = MIRADA_CARD_WIDTH * mirada1.getHeight() / mirada1.getWidth();
 
-        miradaImages[0] = new MiradaCardActor(new TextureRegionDrawable(miradaCardRegion), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
-        miradaImages[1] = new MiradaCardActor(new TextureRegionDrawable(textureAtlas.findRegion(Assets.mirada2)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
-        miradaImages[2] = new MiradaCardActor(new TextureRegionDrawable(textureAtlas.findRegion(Assets.mirada3)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
+        miradaImages[0] = new MiradaCardActor(new TextureRegionDrawable(mirada1), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
+        miradaImages[1] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.mirada2, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
+        miradaImages[2] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.mirada3, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
     }
 
     private void generateCardBoardTable(){
         cardTable = new Table();
 
-        actionCardsBoard = new CardBoardActor(textureAtlas);
-        excuseCardsBoard = new CardBoardActor(textureAtlas);
+        actionCardsBoard = new CardBoardActor(assetManager);
+        excuseCardsBoard = new CardBoardActor(assetManager);
 
         cardTable.add(actionCardsBoard).size(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         cardTable.add(excuseCardsBoard).size(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
@@ -228,7 +225,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         STACK_CARD_GROUP_WIDTH = layout.width;
 
         //Loads the reverse card
-        Drawable visReverseDrawable = changeDrawableSize(new TextureRegionDrawable(textureAtlas.findRegion(Assets.reverso)), STACK_CARD_WIDTH);
+        Drawable visReverseDrawable = changeDrawableSize(new TextureRegionDrawable(assetManager.get(Assets.reverso, Texture.class)), STACK_CARD_WIDTH);
         VisImage visReverse = new VisImage(visReverseDrawable);
         visReverse.setScaling(Scaling.fit);
 
@@ -475,6 +472,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                 excuseCardsBoard.removeAllCards();
 
                 platformFactory.getAllNewCards(group.getId(), player.getId());
+
             } else {
                 showPlayAndHideCardAnimation("m" + playerManager.getNumOutCards(action.getPlayer()),
                         new Runnable() {
@@ -542,6 +540,11 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         playerManager.resetPlayerTurn(player.getId());
         playerManager.removeOutCard(action.getPlayer());
         playerManager.setPleadingPlayer(action.getPlayer(), false);
+
+        minNumPlays = 6;
+        numPlays = 0;
+        playerManager.getRidOfAllCards(action.getPlayer());
+
         playerListAdapter.itemsChanged();
 
         if(player.getId().equals(action.getPlayer())){

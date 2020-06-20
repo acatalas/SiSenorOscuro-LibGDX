@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ale.sisenoroscuro.R;
-import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.GroupDTO;
 import com.ale.sisenoroscuro.network.FirebaseHelper;
 import com.ale.sisenoroscuro.network.GroupRepository;

@@ -1,12 +1,8 @@
 package com.ale.sisenoroscuro.classes;
 
 import com.google.firebase.firestore.DocumentId;
-import com.google.firebase.firestore.Exclude;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GroupDTO {
     @DocumentId

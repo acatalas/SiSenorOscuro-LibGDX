@@ -23,9 +23,7 @@
     <string name="name_preferences_key">NAME</string>
     <string name="max_players_preferences_key">MAX_PLAYERS</string>
     <string name="num_players_max_players">%1$d/%2$d</string>
-    <string name="mirada_asesina">Mirada asesina</string>
     <string name="no_name_dialog">What name do you want to use in this group?</string>
     <string name="duplicate_name_dialog">Please choose a name that is not already in use</string>
-    <string name="play">Play</string>
-    <string name="pass_turn">I have failed you, sir...</string>
+    <string name="shop">Shop</string>
 </resources>

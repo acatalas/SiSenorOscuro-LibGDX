@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ale.sisenoroscuro.R;
 import com.ale.sisenoroscuro.classes.Player;
-import com.ale.sisenoroscuro.classes.PlayerDTO;
 
 import java.util.List;
 

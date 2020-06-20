@@ -2,15 +2,10 @@ package com.ale.sisenoroscuro.actors;
 import com.ale.sisenoroscuro.CardDeckImageListener;
 import com.ale.sisenoroscuro.classes.Card;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
@@ -19,15 +14,15 @@ import java.util.List;
 
 public class CardBoardActor extends HorizontalGroup {
     private static final int NUM_CARDS = 3;
-    private final TextureAtlas textureAtlas;
+    private final AssetManager assetManager;
     private final List<CardActor> cardActors;
 
     private final float baseCardWidth = 95, baseCardHeight = 127;
     private final float cardWidth = Gdx.graphics.getWidth() / 2 / 3;
     private final float cardHeight = cardWidth * baseCardHeight / baseCardWidth;
 
-    public CardBoardActor(TextureAtlas textureAtlas){
-        this.textureAtlas = textureAtlas;
+    public CardBoardActor(AssetManager assetManager){
+        this.assetManager = assetManager;
         cardActors = new ArrayList<>(NUM_CARDS);
         space(-20);
         align(Align.center);
@@ -51,11 +46,11 @@ public class CardBoardActor extends HorizontalGroup {
         System.out.println(cardActors.toString());
     }
 
-    public void addCard(Card card){
-        final CardActor cardActor = new CardActor(getCardTexture(card), cardWidth, cardHeight, card);
+    public void addCard(final Card card){
+        loadCardTexture(card);
+        final CardActor cardActor = new CardActor(new TextureRegionDrawable(assetManager.get(card.getFullName() + ".png", Texture.class)), cardWidth, cardHeight, card);
         cardActors.add(cardActor);
         addActor(cardActor);
-
         cardActor.addListener(new CardDeckImageListener(getStage(), cardActor.getDrawable()));
     }
 
@@ -80,8 +75,14 @@ public class CardBoardActor extends HorizontalGroup {
         return -1;
     }
 
-    private Drawable getCardTexture(Card card){
-        return new TextureRegionDrawable(textureAtlas.findRegion(card.getFullName()));
+    private void loadCardTexture(Card card){
+        if(!assetManager.isLoaded(card.getFullName() + ".png")){
+            assetManager.load(card.getFullName() + ".png", Texture.class);
+            assetManager.finishLoadingAsset(card.getFullName() + ".png");
+        }
+
+
+        //Sreturn new TextureRegionDrawable(assetManager.get(card.getFullName() + ".png", Texture.class));
     }
 
     public float getCardWidth() {

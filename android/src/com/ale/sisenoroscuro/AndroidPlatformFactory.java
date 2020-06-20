@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AndroidPlatformFactory implements PlatformFactory {
-    private Context context;
+    private final Context context;
     private ActionsRepository actionsRepository;
 
     public AndroidPlatformFactory(Context context){
