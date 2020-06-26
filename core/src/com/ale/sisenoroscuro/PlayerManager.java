@@ -6,21 +6,26 @@ import com.ale.sisenoroscuro.classes.CardSubType;
 import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerManager {
-    private String masterName;
+    private Player master;
     private String playerId;
     private List<Player> players;
 
-    public PlayerManager(List<Player> players, String playerId, String masterName){
+    public PlayerManager(List<Player> players, Player master, String playerId){
         this.players = players;
         this.playerId = playerId;
-        this.masterName = masterName;
+        this.master = master;
+    }
+
+    public List<Player> getPlayers(){
+        return players;
     }
 
     public String getMasterName(){
-        return masterName;
+        return master.getName();
     }
 
     private int findPlayerIndex(String id){

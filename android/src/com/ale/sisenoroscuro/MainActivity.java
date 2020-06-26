@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void showShop(){
         Intent intent = new Intent(MainActivity.this, AndroidLauncher.class);
-        intent.putExtra("playerId", "AvzKxW0d4TwjaIQQofGh");
+        intent.putExtra("playerId", "l0GbIYh6w6TmvrNd5hIM");
         intent.putExtra("playerName", "ale");
-        intent.putExtra("groupId", "eHloDj9gx6eJm5i6ws4P");
+        intent.putExtra("groupId", "Ui5aUf1eA3GH4jRBIkNH");
         intent.putExtra("numPlayers", 4);
-        intent.putExtra("groupName", "testing");
-        intent.putExtra("masterId", "YVxbGg4iPrQ2H6Z14ST0");
+        intent.putExtra("groupName", "Ale");
+        intent.putExtra("masterId", "FeML2r0tJMACuBdXrYag");
         startActivity(intent);
     }
 

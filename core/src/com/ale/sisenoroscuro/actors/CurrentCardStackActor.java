@@ -3,10 +3,9 @@ package com.ale.sisenoroscuro.actors;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.kotcrab.vis.ui.VisUI;
-
 
 public class CurrentCardStackActor extends Image {
     private Vector2 position;
@@ -14,8 +13,8 @@ public class CurrentCardStackActor extends Image {
     private float imageHeight;
     private Drawable drawable;
 
-    public CurrentCardStackActor(float imageHeight){
-        drawable = new NinePatchDrawable(VisUI.getSkin().getPatch("card_icon"));
+    public CurrentCardStackActor(Skin skin, float imageHeight){
+        drawable = new NinePatchDrawable(skin.getPatch("card_icon"));
         this.imageHeight = imageHeight;
         imageWidth = this.imageHeight * drawable.getMinWidth() / drawable.getMinHeight();
         drawable.setMinWidth(this.imageWidth);

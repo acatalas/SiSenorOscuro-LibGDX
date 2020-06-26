@@ -11,6 +11,7 @@ import com.ale.sisenoroscuro.classes.ActionType;
 import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.Player;
+import com.ale.sisenoroscuro.recyclerView.ListAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.kotcrab.vis.ui.widget.ListView;
 
 import java.util.List;
 
@@ -43,33 +43,35 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
     public void show() {
         super.show();
 
-        loadAssets();
-
         generateUIComponents();
 
-        playerListView.setItemClickListener(new ListView.ItemClickListener<Player>() {
+        //selects player to start the game
+        playerListAdapter.setItemClickListener(new ListAdapter.ItemClickListener<Player>() {
             @Override
             public void clicked(Player player) {
                 if(firstTurn){
                     activePlayerLabel.setText(playerManager.getPlayerName(player.getId()));
                     playerManager.setActivePlayer(player.getId());
-                    playerListAdapter.itemsDataChanged();
+                    playerListAdapter.itemChanged(player);
                     sendStartAction(player.getId());
                     firstTurn = false;
                 }
             }
         });
 
+        //HEADER
         mainTable.add();
         mainTable.add(activePlayerLabel).growX().height(HEADER_HEIGHT - 20).pad(10);
         mainTable.add()
                 .row();
 
+        //CARD STACK
         mainTable.add(new Container<>(currentCardStackActor)).width(WIDTH_UNIT);
-        mainTable.add(playerListView.getMainTable()).size(WIDTH_UNIT * 3, TABLE_HEIGHT).left();
+        mainTable.add(playerListAdapter.getView()).size(WIDTH_UNIT * 3, TABLE_HEIGHT).left();
         mainTable.add().width(WIDTH_UNIT)
                 .row();
 
+        //FOOTER
         mainTable.add(btnMiradaAsesina).colspan(3).size(WIDTH_UNIT * 2, FOOTER_HEIGHT - 20).pad(10);
 
         setBackground();
@@ -98,7 +100,9 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
 
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                sendMiradaAction();
+                if(playerManager.getActivePlayer() != null){
+                    sendMiradaAction();
+                }
             }
         });
     }
@@ -160,7 +164,6 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
 
     @Override
     public void onActionReceived(Action action) {
-        System.out.println(action);
         if (action.getAction() == ActionType.START){
             doStartAction(action);
         } else if(action.getAction() == ActionType.GET_CARD){
@@ -189,20 +192,27 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
     private void doStartAction(Action action) {
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         playerManager.setActivePlayer(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
     }
 
     private void doGetCardAction(Action action){
         playerManager.giveCardToPlayer(action.getCard(), action.getPlayer());
-        numPlays++;
-        if(numPlays >= minNumPlays){
-            playerListAdapter.itemsChanged();
+
+        //when all cards are given out at the start of the round, update whole player list
+        if(numPlays == (minNumPlays - 1)){
+            for(Player p : playerManager.getPlayers()){
+                playerListAdapter.itemChanged(p);
+            }
+
+        } else if(numPlays >= minNumPlays){ //all subsequent cards given out require individual updates
+            playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
         }
+        numPlays++;
     }
 
     private void doPlayExcuseAction(Action action) {
         playerManager.playExcuseCard(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
         showPlayExcuseCardAnimation(action.getCard());
     }
 
@@ -212,7 +222,7 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
 
         playerManager.playPasarElMarronCard(playerManager.getActivePlayerId(), (ActionCard) action.getCard());
         playerManager.setActivePlayer(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         showMessage("It's " + playerManager.getPlayerName(action.getPlayer()) + "'s turn");
     }
@@ -223,7 +233,7 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
                         (ActionCard)action.getCard() :
                         (ActionCard)action.getSecondCard());
 
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
 
         showPlayExcuseCardAnimation(action.getCard().getCardType() == CardType.EXCUSE ? action.getCard() : action.getSecondCard());
         showMessage(playerManager.getPlayerName(action.getPlayer()) + " has interrupted " + playerManager.getActivePlayerName());
@@ -243,7 +253,7 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
             playerManager.setPleadingPlayer(action.getPlayer(), true);
         }
 
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
     }
 
     private void doPleadAction(Action action) {
@@ -273,7 +283,7 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
         numPlays = 0;
         playerManager.getRidOfAllCards(action.getPlayer());
 
-        playerListAdapter.itemsChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
     }
 
     private void doGameOverAction(Action action) {
@@ -287,12 +297,11 @@ public class MasterGameScreen extends GameScreen implements Screen, ActionListen
         for(Player p : players){
             if(!p.getId().equals(player.getId())){
                 this.players.add(p);
+                playerListAdapter.add(p);
             }
         }
 
-        playerListAdapter.itemsChanged();
-
-        playerManager = new PlayerManager(players, player.getId(), group.getMasterId());
+        playerManager = new PlayerManager(this.players, new Player(player.getId(), player.getName()), player.getId());
         platformFactory.listenForAction(group.getId(), this);
     }
 

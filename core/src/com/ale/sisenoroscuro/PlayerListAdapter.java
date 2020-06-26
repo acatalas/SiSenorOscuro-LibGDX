@@ -9,14 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
 
 import java.util.ArrayList;
 
-public class PlayerListAdapter extends ArrayListAdapter<Player, VisTable> {
+/*public class PlayerListAdapter extends ArrayListAdapter<Player, VisTable> {
     private Color selectedColor;
     private Color availableColor;
     private Color unavailableColor;
@@ -101,7 +97,6 @@ public class PlayerListAdapter extends ArrayListAdapter<Player, VisTable> {
     @Override
     protected void updateView(VisTable view, Player player) {
         super.updateView(view, player);
-        System.out.println(getSelection());
         if(player.isSelected() || player.isPlaying()){
             view.getCells().get(0).getActor().setColor(selectedColor);
         } else if(player.isAvailable()){
@@ -144,4 +139,4 @@ public class PlayerListAdapter extends ArrayListAdapter<Player, VisTable> {
             miradasLabel.setColor(Color.RED);
         }
     }
-}
+}*/

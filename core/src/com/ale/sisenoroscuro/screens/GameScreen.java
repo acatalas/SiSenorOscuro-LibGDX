@@ -6,11 +6,12 @@ import com.ale.sisenoroscuro.FontManager;
 import com.ale.sisenoroscuro.CardStackImageListener;
 import com.ale.sisenoroscuro.PlatformFactory;
 import com.ale.sisenoroscuro.PlayerManager;
-import com.ale.sisenoroscuro.PlayerListAdapter;
 import com.ale.sisenoroscuro.actors.CurrentCardStackActor;
 import com.ale.sisenoroscuro.classes.Card;
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.Player;
+import com.ale.sisenoroscuro.recyclerView.ArrayListAdapter;
+import com.ale.sisenoroscuro.recyclerView.PlayerViewHolder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -36,11 +37,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter;
-import com.kotcrab.vis.ui.widget.ListView;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
 
 import java.util.ArrayList;
 
@@ -67,13 +63,12 @@ public abstract class GameScreen implements Screen {
     protected FontManager fontManager;
     protected AssetManager assetManager;
 
-    protected ArrayListAdapter<Player, VisTable> playerListAdapter;
-    protected ListView<Player> playerListView;
+    protected ArrayListAdapter<Player> playerListAdapter;
     protected ArrayList<Player> players;
-    protected VisLabel activePlayerLabel;
+    protected Label activePlayerLabel;
 
     //STYLES
-    protected VisLabel.LabelStyle messageLabelStyle;
+    protected Label.LabelStyle messageLabelStyle;
     protected TextButton.TextButtonStyle textButtonStyle;
 
     protected CurrentCardStackActor currentCardStackActor;
@@ -89,17 +84,12 @@ public abstract class GameScreen implements Screen {
     protected byte numPlays = 0;
 
     public GameScreen(PlatformFactory platformFactory, Group group, Player me){
-
-        if(!VisUI.isLoaded()){
-            VisUI.load(Gdx.files.internal("uiskin.json"));
-        }
-
         this.currentCardImage = new Image();
 
         this.platformFactory = platformFactory;
         this.assetManager = new AssetManager();
         this.fontManager = new FontManager(assetManager);
-        this.skin = VisUI.getSkin();
+        this.skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.group = group;
         this.player = me;
         players = new ArrayList<>();
@@ -116,8 +106,12 @@ public abstract class GameScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        mainTable = new VisTable();
+        mainTable = new Table();
         mainTable.setFillParent(true);
+
+        loadAssets();
+
+        generateUIComponents();
     }
 
     @Override
@@ -148,9 +142,7 @@ public abstract class GameScreen implements Screen {
     @Override
     public void dispose() {
         assetManager.dispose();
-        if(VisUI.isLoaded()){
-            VisUI.dispose();
-        }
+        skin.dispose();
         stage.dispose();
         //platformFactory.stopListeningForActions();
     }
@@ -162,16 +154,12 @@ public abstract class GameScreen implements Screen {
     }
 
     protected void generatePlayerListView(){
-        playerListAdapter = new PlayerListAdapter(fontManager, players);
-        playerListView = new ListView<>(playerListAdapter);
-        playerListView.getScrollPane().setFlickScroll(true);
-        playerListView.getScrollPane().setScrollbarsOnTop(true);
-        playerListView.getScrollPane().setVariableSizeKnobs(false);
-        playerListView.getScrollPane().setScrollingDisabled(true, false);
+        playerListAdapter = new ArrayListAdapter<>(skin, players, new PlayerViewHolder(fontManager, skin));
+        playerListAdapter.setScrollPaneConfig(true, true, false, false, true);
     }
 
     protected void generateActivePlayerLabel(){
-        activePlayerLabel = new VisLabel("");
+        activePlayerLabel = new Label("", skin);
         activePlayerLabel.setAlignment(Align.center);
         loadMessageFontStyle();
     }
@@ -188,7 +176,7 @@ public abstract class GameScreen implements Screen {
     protected abstract void loadTextButtonStyle();
 
     protected void generateCardStackActor(){
-        currentCardStackActor = new CurrentCardStackActor(CARD_STACK_HEIGHT);
+        currentCardStackActor = new CurrentCardStackActor(skin, CARD_STACK_HEIGHT);
     }
 
     protected void setCardStackPosition(){
@@ -206,27 +194,28 @@ public abstract class GameScreen implements Screen {
         Label.LabelStyle labelStyle = activePlayerLabel.getStyle();
         labelStyle.font = fontManager.getBlackCastleFont(fontSize, false);
         activePlayerLabel.setStyle(labelStyle);
+        activePlayerLabel.setText("Alejandra");
     }
 
     protected void setBackground(){
-        background = new TextureRegionDrawable(assetManager.get(Assets.wood, Texture.class));
+        background = new TextureRegionDrawable(assetManager.get(Assets.Image.wood, Texture.class));
         mainTable.setBackground(background);
     }
 
     protected void loadAssets(){
-        assetManager.load(Assets.wood, Texture.class);
-        assetManager.load(Assets.mirada1, Texture.class);
-        assetManager.load(Assets.mirada2, Texture.class);
-        assetManager.load(Assets.mirada3, Texture.class);
-        assetManager.load(Assets.reverso, Texture.class);
+        assetManager.load(Assets.Image.wood, Texture.class);
+        assetManager.load(Assets.Image.mirada1, Texture.class);
+        assetManager.load(Assets.Image.mirada2, Texture.class);
+        assetManager.load(Assets.Image.mirada3, Texture.class);
+        assetManager.load(Assets.Image.reverso, Texture.class);
         for(int i = 1; i <= 80; i++){
-            assetManager.load("e" + i + ".png", Texture.class);
+            assetManager.load("e" + i + Assets.Image.IMAGE_EXTENSION, Texture.class);
         }
-        assetManager.load("aas.png", Texture.class);
-        assetManager.load("ain.png", Texture.class);
-        assetManager.load("ais.png", Texture.class);
-        assetManager.load("apn.png", Texture.class);
-        assetManager.load("aps.png", Texture.class);
+        assetManager.load("aas" + Assets.Image.IMAGE_EXTENSION, Texture.class);
+        assetManager.load("ain" + Assets.Image.IMAGE_EXTENSION, Texture.class);
+        assetManager.load("ais" + Assets.Image.IMAGE_EXTENSION, Texture.class);
+        assetManager.load("apn" + Assets.Image.IMAGE_EXTENSION, Texture.class);
+        assetManager.load("aps" + Assets.Image.IMAGE_EXTENSION, Texture.class);
         assetManager.finishLoading();
     }
 
@@ -266,7 +255,7 @@ public abstract class GameScreen implements Screen {
     }
 
     protected void showMessage(String message){
-        final Container<VisLabel> messageContainer = prepareMessage(message);
+        final Container<Label> messageContainer = prepareMessage(message);
         messageContainer.addAction(
                 Actions.sequence(
                     ActionGenerator.getPanDownAndScaleUpAction(-MESSAGE_PAN_HEIGHT, 1),
@@ -282,7 +271,7 @@ public abstract class GameScreen implements Screen {
     }
 
     protected void showMessage(String message, Runnable postAction){
-        final Container<VisLabel> messageContainer = prepareMessage(message);
+        final Container<Label> messageContainer = prepareMessage(message);
         messageContainer.addAction(
                 Actions.sequence(
                         ActionGenerator.getPanDownAndScaleUpAction(-MESSAGE_PAN_HEIGHT, 1),
@@ -298,13 +287,13 @@ public abstract class GameScreen implements Screen {
                 ));
     }
 
-    private Container<VisLabel> prepareMessage(String message){
-        final VisLabel label = new VisLabel(message, messageLabelStyle);
+    private Container<Label> prepareMessage(String message){
+        final Label label = new Label(message, messageLabelStyle);
         label.setAlignment(Align.center);
         label.setWrap(true);
         label.setOrigin(Align.center);
 
-        final Container<VisLabel> labelContainer = new Container<>(label);
+        final Container<Label> labelContainer = new Container<>(label);
         labelContainer.setTransform(true);
         labelContainer.setWidth(SCREEN_WIDTH - 100);
         labelContainer.prefWidth(SCREEN_WIDTH - 100);
@@ -363,16 +352,16 @@ public abstract class GameScreen implements Screen {
     protected void showGameOverMessage(String reason){
         stage.addActor(transparentOverlay);
 
-        final VisLabel reasonLabel = new VisLabel(reason, messageLabelStyle);
+        final Label reasonLabel = new Label(reason, messageLabelStyle);
         reasonLabel.setAlignment(Align.center);
-        Container<VisLabel> reasonLabelContainer = new Container<>(reasonLabel);
+        Container<Label> reasonLabelContainer = new Container<>(reasonLabel);
         reasonLabelContainer.setTransform(true);
         reasonLabelContainer.setOrigin(Align.center);
         reasonLabelContainer.setPosition((SCREEN_WIDTH / 2) - (reasonLabelContainer.getWidth() / 2), SCREEN_HEIGHT);
 
-        final VisLabel gameOverLabel = new VisLabel("GAME OVER", messageLabelStyle);
+        final Label gameOverLabel = new Label("GAME OVER", messageLabelStyle);
         gameOverLabel.setAlignment(Align.center);
-        final Container<VisLabel> gameOverLabelContainer = new Container<>(gameOverLabel);
+        final Container<Label> gameOverLabelContainer = new Container<>(gameOverLabel);
         gameOverLabelContainer.setTransform(true);
         gameOverLabelContainer.setOrigin(Align.center);
         gameOverLabelContainer.setPosition(SCREEN_WIDTH / 2  - (gameOverLabelContainer.getWidth() / 2), SCREEN_HEIGHT / 2);

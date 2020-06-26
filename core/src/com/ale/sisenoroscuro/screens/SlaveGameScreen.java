@@ -3,7 +3,6 @@ package com.ale.sisenoroscuro.screens;
 import com.ale.sisenoroscuro.ActionListener;
 import com.ale.sisenoroscuro.Assets;
 import com.ale.sisenoroscuro.FontManager;
-import com.ale.sisenoroscuro.PlayerListAdapter;
 import com.ale.sisenoroscuro.actors.CardActor;
 import com.ale.sisenoroscuro.actors.CardBoardActor;
 import com.ale.sisenoroscuro.PlatformFactory;
@@ -18,6 +17,9 @@ import com.ale.sisenoroscuro.classes.CardType;
 import com.ale.sisenoroscuro.classes.ExcuseCard;
 import com.ale.sisenoroscuro.classes.Group;
 import com.ale.sisenoroscuro.classes.Player;
+import com.ale.sisenoroscuro.recyclerView.ArrayListAdapter;
+import com.ale.sisenoroscuro.recyclerView.ListAdapter;
+import com.ale.sisenoroscuro.recyclerView.PlayerViewHolder;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -34,12 +36,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import com.kotcrab.vis.ui.util.adapter.ArrayListAdapter;
-import com.kotcrab.vis.ui.widget.ListView;
-import com.kotcrab.vis.ui.widget.VisImage;
-import com.kotcrab.vis.ui.widget.VisTable;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class SlaveGameScreen extends GameScreen implements Screen, ActionListener {
@@ -47,20 +43,23 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     private static float HEIGHT_UNIT = SCREEN_HEIGHT / 5;
     private static float DIALOG_LIST_HEIGHT = HEIGHT_UNIT * 3;
     private static float DIALOG_BUTTON_HEIGHT = HEIGHT_UNIT * 1;
-    private static float MIRADA_CARD_TOTAL_WIDTH = (WIDTH_UNIT * 2) / 4; //85
+    /*private static float MIRADA_CARD_TOTAL_WIDTH = (WIDTH_UNIT * 2) / 4; //85
     private static float MIRADA_CARD_PADDING = MIRADA_CARD_TOTAL_WIDTH / 8; //28
     private static float MIRADA_CARD_WIDTH = MIRADA_CARD_TOTAL_WIDTH - MIRADA_CARD_PADDING; //85
     private static float STACK_CARD_WIDTH = SCREEN_WIDTH / 2 / 3;
+    private static float STACK_CARD_GROUP_HEIGHT = SCREEN_HEIGHT / 2 / 4 * 3;*/
+
+    private static float STACK_CARD_GROUP_HEIGHT = SCREEN_HEIGHT / 2 / 4 * 3;
 
     private float MIRADA_CARD_HEIGHT;
     private float STACK_CARD_GROUP_WIDTH;
 
+    private float MIRADA_CARD_TOTAL_WIDTH, MIRADA_CARD_PADDING, MIRADA_CARD_WIDTH;
+
     private VerticalGroup cardStackGroup;
     private CardBoardActor actionCardsBoard, excuseCardsBoard;
     private Table cardTable;
-    private ArrayList<Player> playersMinusMe;
-    private ArrayListAdapter<Player, VisTable> playerListDetailAdapter;
-    private ListView<Player> playerListDetailView;
+    private ArrayListAdapter<Player> playerListDetailAdapter;
     private ModalDialog modalDialog;
     private TextButton playButton;
 
@@ -71,7 +70,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     public SlaveGameScreen(final PlatformFactory platformFactory, final Group group, Player me){
         super(platformFactory, group, me);
-        this.playersMinusMe = new ArrayList<>();
         this.currentCardImage = new Image();
     }
 
@@ -79,20 +77,21 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     public void show() {
         super.show();
 
-        loadAssets();
-
         generateUIComponents();
 
+        mainTable.defaults().maxHeight(SCREEN_HEIGHT / 2);
+
         //Adds the MIRADA cards to the table
-        mainTable.add(miradaImages[0]).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0).expandY();//78
-        mainTable.add(getCurrentCardStackGroup()).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0).growY();//
-        mainTable.add(miradaImages[2]).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0).expandY();//
+        mainTable.add(miradaImages[0]).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0);//78
+        mainTable.add(getCurrentCardStackGroup()).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0);//
+        mainTable.add(miradaImages[2]).top().width(MIRADA_CARD_WIDTH).pad(MIRADA_CARD_PADDING / 2).padBottom(0);//
 
         //Adds the center card stack
-        mainTable.add(cardStackGroup).width(STACK_CARD_GROUP_WIDTH).padLeft(10).padRight(10).padTop(MIRADA_CARD_PADDING / 2).growY().center();
+        //mainTable.add(cardStackGroup).center().width(STACK_CARD_GROUP_WIDTH).height(SCREEN_HEIGHT / 2).padLeft(10).padRight(10).padTop(MIRADA_CARD_PADDING / 2).growY();
+        mainTable.add(cardStackGroup).center().width(STACK_CARD_GROUP_WIDTH).height(SCREEN_HEIGHT / 2).padTop(MIRADA_CARD_PADDING / 2).growY();
 
         //Adds the player list
-        mainTable.add(playerListView.getMainTable()).height(SCREEN_HEIGHT / 2).top().right().padTop(MIRADA_CARD_PADDING / 2).growX();
+        mainTable.add(playerListAdapter.getView()).top().right().padTop(MIRADA_CARD_PADDING / 2).growX();
         mainTable.row();
 
         //Adds the card board
@@ -152,36 +151,29 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
             }
         });
 
-        modalDialog.add(playerListDetailView.getMainTable()).height(DIALOG_LIST_HEIGHT);
+        modalDialog.add(playerListDetailAdapter.getView()).height(DIALOG_LIST_HEIGHT);
         modalDialog.row();
         modalDialog.add(playButton).size(WIDTH_UNIT, DIALOG_BUTTON_HEIGHT);
         modalDialog.padTop(10).padBottom(10).padLeft(20).padRight(20);
     }
 
+    //adds the player list. Override aligns the list to the right.
     @Override
     protected void generatePlayerListView(){
-        playerListAdapter = new PlayerListAdapter(fontManager, players, Align.right);
-        playerListView = new ListView<>(playerListAdapter);
-        playerListView.getScrollPane().setFlickScroll(true);
-        playerListView.getScrollPane().setScrollbarsOnTop(true);
-        playerListView.getScrollPane().setVariableSizeKnobs(false);
-        playerListView.getScrollPane().setScrollingDisabled(true, false);
+        playerListAdapter = new ArrayListAdapter<>(skin, players, new PlayerViewHolder(fontManager, skin), Align.right);
+        playerListAdapter.setScrollPaneConfig(true, true, false, false, true);
     }
 
     protected void generatePlayerDetailListView(){
-        playerListDetailAdapter = new PlayerListAdapter(fontManager, playersMinusMe);
-        playerListDetailView = new ListView<>(playerListDetailAdapter);
-        playerListDetailView.setItemClickListener(new ListView.ItemClickListener<Player>() {
+        playerListDetailAdapter = new ArrayListAdapter<>(skin, new PlayerViewHolder(fontManager, skin));
+        playerListDetailAdapter.setScrollPaneConfig(true, true, false, false, true);
+        playerListDetailAdapter.setItemClickListener(new ListAdapter.ItemClickListener<Player>() {
             @Override
             public void clicked(Player player) {
                 playerManager.selectPlayer(player.getId());
-                playerListDetailAdapter.itemsDataChanged();
+                playerListDetailAdapter.itemChanged(player);
             }
         });
-        playerListDetailView.getScrollPane().setFlickScroll(true);
-        playerListDetailView.getScrollPane().setScrollbarsOnTop(true);
-        playerListDetailView.getScrollPane().setVariableSizeKnobs(false);
-        playerListDetailView.getScrollPane().setScrollingDisabled(true, false);
     }
 
     private VerticalGroup getCurrentCardStackGroup(){
@@ -192,12 +184,12 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
     }
 
     private void generateMiradaCardImages(){
-        Texture mirada1 = assetManager.get(Assets.mirada1, Texture.class);
+        Texture mirada1 = assetManager.get(Assets.Image.mirada1, Texture.class);
         MIRADA_CARD_HEIGHT = MIRADA_CARD_WIDTH * mirada1.getHeight() / mirada1.getWidth();
 
         miradaImages[0] = new MiradaCardActor(new TextureRegionDrawable(mirada1), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
-        miradaImages[1] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.mirada2, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
-        miradaImages[2] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.mirada3, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
+        miradaImages[1] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.Image.mirada2, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
+        miradaImages[2] = new MiradaCardActor(new TextureRegionDrawable(assetManager.get(Assets.Image.mirada3, Texture.class)), MIRADA_CARD_WIDTH, MIRADA_CARD_HEIGHT);
     }
 
     private void generateCardBoardTable(){
@@ -209,7 +201,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         cardTable.add(actionCardsBoard).size(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         cardTable.add(excuseCardsBoard).size(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-        Drawable drawable = skin.getTiledDrawable("felt_tile");
+        Drawable drawable = skin.getTiledDrawable(Assets.Skin.Image.felt);
         cardTable.setBackground(drawable);
     }
 
@@ -223,17 +215,20 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         GlyphLayout layout = new GlyphLayout(); //don't do this every frame! Store it as member
         layout.setText(activePlayerLabel.getStyle().font, "Acknowledgement");
         STACK_CARD_GROUP_WIDTH = layout.width;
+        MIRADA_CARD_TOTAL_WIDTH = (SCREEN_WIDTH - STACK_CARD_GROUP_WIDTH) / 2 / 3;
+        MIRADA_CARD_PADDING = MIRADA_CARD_TOTAL_WIDTH / 8;
+        MIRADA_CARD_WIDTH = MIRADA_CARD_TOTAL_WIDTH - MIRADA_CARD_PADDING;
 
         //Loads the reverse card
-        Drawable visReverseDrawable = changeDrawableSize(new TextureRegionDrawable(assetManager.get(Assets.reverso, Texture.class)), STACK_CARD_WIDTH);
-        VisImage visReverse = new VisImage(visReverseDrawable);
-        visReverse.setScaling(Scaling.fit);
+        Drawable reverseDrawable = changeDrawableSizeWithHeight(new TextureRegionDrawable(assetManager.get(Assets.Image.reverso, Texture.class)), STACK_CARD_GROUP_HEIGHT );
+        Image reverse = new Image(reverseDrawable);
+        reverse.setScaling(Scaling.fit);
 
         cardStackGroup = new VerticalGroup();
         cardStackGroup.space(MIRADA_CARD_PADDING / 2);
         cardStackGroup.align(Align.top);
         cardStackGroup.addActor(activePlayerLabel);
-        cardStackGroup.addActor(new Image(visReverseDrawable));
+        cardStackGroup.addActor(new Image(reverseDrawable));
     }
 
     private void configureDragAndDrop(){
@@ -294,7 +289,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                     if(selectedCardActor.getCard().getCardType() == CardType.ACTION) {
                         standbyCardActor = selectedCardActor;
                         actionCardsBoard.removeCardActor(selectedCardActor);
-                        playerListDetailAdapter.itemsChanged();
+                        playerListDetailAdapter.itemChanged(player);
                         modalDialog.show(stage);
                     } else {
                         excuseCardsBoard.removeCardActor(selectedCardActor);
@@ -322,10 +317,17 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         });
     }
 
-    private Drawable changeDrawableSize(Drawable drawable, float width){
+    private Drawable changeDrawableSizeWithWidth(Drawable drawable, float width){
         float minWidth = drawable.getMinWidth();
         drawable.setMinWidth(width);
         drawable.setMinHeight(drawable.getMinHeight() * width / minWidth);
+        return drawable;
+    }
+
+    private Drawable changeDrawableSizeWithHeight(Drawable drawable, float height){
+        float minHeight = drawable.getMinHeight();
+        drawable.setMinHeight(height);
+        drawable.setMinWidth(drawable.getMinWidth() * height / minHeight);
         return drawable;
     }
 
@@ -339,7 +341,6 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     @Override
     public void onActionReceived(Action action) {
-        System.out.println(action);
         if (action.getAction() == ActionType.START){
             doStartAction(action);
         } else if(action.getAction() == ActionType.GET_CARD){
@@ -371,7 +372,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         showMessage("The master, " + playerManager.getMasterName() + ", wants explanations from " + playerManager.getPlayerName(action.getPlayer()) + "!");
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         playerManager.setActivePlayer(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
     }
 
     private void doGetCardAction(Action action){
@@ -383,15 +384,21 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                 excuseCardsBoard.addCard(action.getCard());
             }
         }
-        numPlays++;
-        if(numPlays >= minNumPlays){
-            playerListAdapter.itemsChanged();
+        //when all cards are given out at the start of the round, update whole player list
+        if(numPlays == (minNumPlays - 1)){
+            for(Player p : playerManager.getPlayers()){
+                playerListAdapter.itemChanged(p);
+            }
+
+        } else if(numPlays >= minNumPlays){ //all subsequent cards given out require individual updates
+            playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
         }
+        numPlays++;
     }
 
     private void doPlayExcuseAction(Action action){
         playerManager.playExcuseCard(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
         showPlayExcuseCardAnimation(action.getCard());
     }
 
@@ -404,20 +411,15 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
         playerManager.playPasarElMarronCard(playerManager.getActivePlayerId(), (ActionCard) action.getCard());
         playerManager.setActivePlayer(action.getPlayer());
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
         activePlayerLabel.setText(playerManager.getPlayerName(action.getPlayer()));
         showMessage("It's " + playerManager.getPlayerName(action.getPlayer()) + "'s turn");
-
-        System.out.println(playerManager.getNumberOfActionCards(player.getId()));
 
         //If I'm receiving my turn
         if(player.getId().equals(action.getPlayer()) &&
                 playerManager.getNumberOfActionCards(player.getId()) < 3){
-            System.out.println("ASKING FOR ACTION CARD");
             platformFactory.getCard(group.getId(), player.getId(), CardType.ACTION);
         }
-
-
 
         //if was playing interrumpir card, bring back to hand
         /*if(standbyCardActor != null){
@@ -436,7 +438,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
                         (ActionCard)action.getCard() :
                         (ActionCard)action.getSecondCard());
 
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getPlayer(action.getPlayer()));
         showPlayExcuseCardAnimation(action.getCard().getCardType() == CardType.EXCUSE ? action.getCard() : action.getSecondCard());
         showMessage(playerManager.getPlayerName(action.getPlayer()) + " has interrupted " + playerManager.getActivePlayerName());
     }
@@ -456,7 +458,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
             playerManager.setPleadingPlayer(action.getPlayer(), true);
         }
 
-        playerListAdapter.itemsDataChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
 
         //If I'm the player receiving the out card
         if(action.getPlayer().equals(player.getId())){
@@ -545,7 +547,7 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
         numPlays = 0;
         playerManager.getRidOfAllCards(action.getPlayer());
 
-        playerListAdapter.itemsChanged();
+        playerListAdapter.itemChanged(playerManager.getActivePlayer());
 
         if(player.getId().equals(action.getPlayer())){
             miradaImages[2].hideCard();
@@ -564,22 +566,22 @@ public class SlaveGameScreen extends GameScreen implements Screen, ActionListene
 
     @Override
     public void onPlayersRetrieved(List<Player> players) {
-        String masterName = "";
+        Player master = new Player();
+
         for(Player p : players){
+            //CHECK THAT PLAYER IS NOT MASTER
             if(!p.getId().equals(group.getMasterId())){
                 this.players.add(p);
+                playerListAdapter.add(p);
                 if(!p.getId().equals(player.getId())){
-                    this.playersMinusMe.add(p);
+                    playerListDetailAdapter.add(p);
                 }
             } else {
-                masterName = p.getName();
+                master = new Player(p.getId(), p.getName());
             }
         }
 
-        playerListAdapter.itemsChanged();
-        playerListDetailAdapter.itemsChanged();
-
-        playerManager = new PlayerManager(players, group.getId(), masterName);
+        playerManager = new PlayerManager(this.players, master, player.getId());
         platformFactory.listenForAction(group.getId(), this);
     }
 
