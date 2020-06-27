@@ -1,6 +1,7 @@
 package com.ale.sisenoroscuro.groups;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
     private View.OnClickListener onClickListener;
     private final Resources resources;
     private int selectedPos = RecyclerView.NO_POSITION;
+    private boolean viewLocked = false;
 
     public GroupAdapter(FirestoreRecyclerOptions<GroupDTO> options, Context context) {
         super(options);
@@ -28,6 +30,10 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
 
     public void setOnItemClickListener(View.OnClickListener onClickListener){
         this.onClickListener = onClickListener;
+    }
+
+    public void setIsViewLocked(boolean isViewLocked){
+        this.viewLocked = isViewLocked;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -47,8 +53,10 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
         public void onClick(View view) {
             onClickListener.onClick(view);
             notifyItemChanged(selectedPos);
-            selectedPos = getLayoutPosition();
-            notifyItemChanged(selectedPos);
+            if(!viewLocked){
+                selectedPos = getLayoutPosition();
+                notifyItemChanged(selectedPos);
+            }
         }
     }
 
@@ -67,6 +75,8 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<GroupDTO, GroupAdapte
         holder.tvGroupName.setText(group.getName());
         if(selectedPos == i){
             holder.isSelected.setImageResource(R.drawable.selected_arrow);
+        } else {
+            holder.isSelected.setImageDrawable(null);
         }
     }
 }

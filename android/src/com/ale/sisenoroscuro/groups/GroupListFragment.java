@@ -59,4 +59,12 @@ public class GroupListFragment extends Fragment  {
     public interface OnGroupSelectedListener {
         void onGroupSelected(String id, String name);
     }
+
+    public void lockItem(){
+        adapter.setIsViewLocked(true);
+    }
+
+    public void unlockItem(){
+        adapter.setIsViewLocked(false);
+    }
 }

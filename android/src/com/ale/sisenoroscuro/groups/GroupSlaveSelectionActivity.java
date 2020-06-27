@@ -28,6 +28,7 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
     private static final String JOIN_TAG = "JOIN";
     private static final String LEAVE_TAG = "LEAVE";
     private GroupDetailFragment groupDetailFragment;
+    private GroupListFragment groupListFragment;
     private Button btnJoinGroup;
 
     @Override
@@ -43,7 +44,7 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
 
         groupDetailFragment = (GroupDetailFragment) fm.findFragmentById(R.id.group_list_detail);
 
-        GroupListFragment groupListFragment = (GroupListFragment) fm.findFragmentById(R.id.group_list_fragment);
+        groupListFragment = (GroupListFragment) fm.findFragmentById(R.id.group_list_fragment);
 
         groupListFragment.setOnGroupSelectedListener(this);
 
@@ -79,6 +80,7 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
             }
         } else {
             leaveGroup();
+            groupListFragment.unlockItem();
         }
     }
 
@@ -87,6 +89,7 @@ public class GroupSlaveSelectionActivity extends GroupSelectionActivity
         listenCurrentGroup();
         btnJoinGroup.setTag(LEAVE_TAG);
         btnJoinGroup.setText(R.string.abandon_group);
+        groupListFragment.lockItem();
     }
 
     private void leaveGroup(){
