@@ -194,7 +194,7 @@ public abstract class GameScreen implements Screen {
         Label.LabelStyle labelStyle = activePlayerLabel.getStyle();
         labelStyle.font = fontManager.getBlackCastleFont(fontSize, false);
         activePlayerLabel.setStyle(labelStyle);
-        activePlayerLabel.setText("Alejandra");
+        activePlayerLabel.setText("");
     }
 
     protected void setBackground(){

@@ -97,19 +97,44 @@ public class GroupRepository {
                 .get();
     }
 
-    public static void joinGroup(String groupRef, String playerName, Callback callback) {
+    private static Request getJoinGroupRequest(String groupRef, String playerName){
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://us-central1-sisenoroscuro.cloudfunctions.net/webApi/group").newBuilder();
         urlBuilder.addQueryParameter("groupId", groupRef);
         urlBuilder.addQueryParameter("playerName", playerName);
         String url = urlBuilder.build().toString();
 
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(3, TimeUnit.SECONDS);
-
         Request request = new Request.Builder()
                 .get()
                 .url(url)
                 .build();
+        return request;
+    }
+
+    public static void joinGroup(String groupRef, String playerName) {
+        OkHttpClient client = new OkHttpClient();
+        client.setConnectTimeout(3, TimeUnit.SECONDS);
+
+        Request request = getJoinGroupRequest(groupRef, playerName);
+
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Log.e("APP_JOIN_GROUP", e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    Log.d("APP_JOIN_GROUP", response.message());
+                }
+            });
+    }
+
+    public static void joinGroup(String groupRef, String playerName, Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        client.setConnectTimeout(3, TimeUnit.SECONDS);
+
+        Request request = getJoinGroupRequest(groupRef, playerName);
 
         client.newCall(request).enqueue(callback);
     }
